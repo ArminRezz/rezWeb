@@ -1,8 +1,12 @@
 # rezWeb
-Portfolio, progress, and recording website for my personal projects and endeavors.
+Portfolio, progress, and website for storage of my personal projects, information, and endeavors.
 
-Start server with cd backend, then npm run dev
+Keep in mind, before starting the server you need to set correct mongoDB key.
+To start server,
+cd backend
+npm run dev
 
-Start frontend with npm start
+Start frontend,
+npm start
 
-Using MERN stack with Javascript currently but will convert to Typescript
+Currently, using MERN stack with Javascript currently but will convert to Typescript
