@@ -10,7 +10,7 @@ const ArtPage = () => {
 
 	useEffect(() => {
 		const fetchArts = async () => {
-			const response = await fetch('/api/arts')
+			const response = await fetch('/api/art')
 			const json = await response.json()
 
 			if (response.ok) {
