@@ -1,0 +1,54 @@
+.Home {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.profile-image {
+    border-radius: 0%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+}
+
+.social-buttons {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.social-button {
+    display: inline-block;
+    margin: 0 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.skills ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.experience,
+.education,
+.skills-hobbies {
+    margin-bottom: 40px;
+}
+
+.experience h2,
+.education h2,
+.skills-hobbies h2 {
+    margin-bottom: 20px;
+}
+
+.experience p,
+.education p,
+.contact-info p {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+/* Add more styles as needed */

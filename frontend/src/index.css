@@ -13,26 +13,30 @@ body {
 }
 header {
   background: #fff;
+  padding: 10px 0;
 }
 header .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 10px 20px;
+  padding: 0px 20px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 }
+
 header a {
   color: #333;
   text-decoration: none;
+  padding-left: 1em;
+  padding-right: 1em;
 }
 .pages{
-  max-width: 1400px;
+  max-width: auto;
   padding: 20px;
   margin: 0 auto;
 }
 
-/* homepage */
+/* homepage */  
 .home {
   display: grid;
   grid-template-columns: 3fr 1fr;

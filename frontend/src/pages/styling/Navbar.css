@@ -1,0 +1,15 @@
+/* Navbar.css */
+.nav-link {
+	text-decoration: none;
+	color: #333; /* Set your desired link color */
+	margin: 0 20px; /* Adjust spacing between links */
+    padding-left: 40px; 
+    padding-right: 40px;
+	transition: color .3s ease; /* Add transition for smooth color change */
+    border: 3px solid #00000000;
+}
+
+.nav-link:hover {
+	color: #000000; /* Set the color for the hover effect */
+    border: 3px solid #000000;
+}
