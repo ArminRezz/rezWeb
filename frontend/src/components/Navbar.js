@@ -6,17 +6,17 @@ const Navbar = () => {
 	return (
 		<header>
 			<div className="container">
-				<Link to="/" className="nav-link">
-					<h3>Home</h3>
+				<Link to="/" className="nav-link-1">
+					<p> &lt;/&gt; ArminRezz </p>
 				</Link>
 				<Link to="/workouts" className="nav-link">
-					<h3>Workouts</h3>
+					<p>Projects</p>
 				</Link>
 				<Link to="/art" className="nav-link">
-					<h3>Art</h3>
+					<p>Experiences</p>
 				</Link>
-				<Link to="/code" className="nav-link">
-					<h3>Code</h3>
+				<Link to="/contact" className="nav-link">
+					<p>Resume</p>
 				</Link>
 			</div>
 		</header>
