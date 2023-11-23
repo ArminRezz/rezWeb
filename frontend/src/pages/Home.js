@@ -13,13 +13,16 @@ const Home = () => {
 					<h1>Armin</h1> <p>Rezaiyan-Nojani,</p>
 				</div>
 				<div className="abstract">
-					<p>
-						Passionate software engineer and machine learning
-						enthusiast with diverse experience at NASA and NIST.
-						Proficient in Java, C++, Python, HTML, CSS, and a bit of
-						React. Actively pursuing machine learning, I bring
-						creativity and dedication to each project, eager to
-						contribute in forward-thinking environments.
+					<p className="typing-text">
+						Enthusiastic software architect and machine learning
+						aficionado, I've traversed the realms of NASA and NIST,
+						mastering the languages of Java, C++, Python, HTML, and
+						CSS, with a sprinkle of React for added flair. Embarking
+						on a relentless pursuit of machine learning, I bring a
+						potent blend of imagination and commitment to every
+						project. Eager to contribute my skills in dynamic,
+						forward-thinking landscapes, I'm on a quest to redefine
+						the boundaries of innovation.
 					</p>
 				</div>
 				<div className="socials">
@@ -45,7 +48,7 @@ const Home = () => {
 					</a>
 				</div>
 			</div>
-			<Particle /> 
+			<Particle />
 			<div className="Carousel">
 				<Carousel />
 			</div>

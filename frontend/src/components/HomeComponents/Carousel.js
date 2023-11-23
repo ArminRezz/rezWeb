@@ -4,11 +4,17 @@ import jsLogo from "../../images/jsLogo.png"
 import tsLogo from "../../images/tsLogo.png"
 import htmlLogo from "../../images/htmlLogo.svg"
 import reactLogo from "../../images/reactLogo.svg"
+import javaLogo from "../../images/javaLogo.png"
+import pythonLogo from "../../images/pythonLogo.png"
+import cplusplusLogo from "../../images/cplusplusLogo.png"
 
 const Carousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const images = [
+    javaLogo,
+    pythonLogo,
+    cplusplusLogo,
     jsLogo,
     tsLogo,
     htmlLogo,
