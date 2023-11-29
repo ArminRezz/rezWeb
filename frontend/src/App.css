@@ -1,0 +1,93 @@
+.pname-container {
+  display: block;
+  text-align: center;
+}
+.name-container {
+  z-index: 20;
+  display: inline-block;
+  margin-top: 9rem;
+}
+
+.name-container h1{
+  font-weight: bold;
+  font-size: 5rem;
+  font-family:'Courier New', Courier, monospace;
+  opacity: 90%;
+  width: 100%;
+  color: rgb(255, 255, 255);
+}
+
+#gitLogo {
+  background-image: url(./images/githubLogo.png);
+  filter: grayscale(100%);
+}
+
+.page-0-content {
+  display: block;
+  z-index: 20;
+  margin-top: 63rem;
+  height: 100%;
+  text-align: center;
+}
+
+.animation, .animation_layer {
+	height: 1000px;
+}
+
+.animation {
+  display: block;
+	position: relative;
+	z-index: 10;
+}
+
+.animation_layer {
+	background-position: bottom center;
+	background-size: auto 1038px;
+	background-repeat: repeat-x;
+	width: 100%;
+	position: absolute;
+}
+
+.animation_layer.parallax {
+	position: fixed;
+}
+
+#artback {
+  background-image: url(./images/background.png);
+  filter: grayscale(100%);
+}
+
+#mountain {
+  background-image: url(./images/mountains.png);
+  filter: grayscale(100%);
+}
+
+#jungle1 {
+  background-image: url(./images/jungle1.png);
+  filter: grayscale(100%);
+}
+
+#jungle2 {
+  background-image: url(./images/jungle2.png);
+  filter: grayscale(100%);
+}
+
+#jungle3 {
+  background-image: url(./images/jungle3.png);
+  filter: grayscale(100%);
+}
+
+#jungle4 {
+  background-image: url(./images/jungle4.png);
+  filter: grayscale(100%);
+}
+
+#jungle5 {
+  background-image: url(./images/jungle5.png);
+  filter: grayscale(100%);
+}
+
+#manonmountain {
+  background-image: url(./images/man_on_mountain.png);
+  filter: grayscale(100%);
+}
