@@ -10,85 +10,76 @@ function App() {
 		<>
 			<div className="App">
 				<Parallax
-					pages={3}
-					style={{ top: "0", left: "0" }}
+					pages={4}
+					style={{
+						backgroundColor: "rgb(0, 12, 0)",
+						top: "0",
+						left: "0",
+					}}
 					class="animation"
 				>
-					<ParallaxLayer offset={0} speed={0.25}>
+					<ParallaxLayer offset={0} speed={-0.38}>
 						<div
 							class="animation_layer parallax"
 							id="artback"
 						></div>
 					</ParallaxLayer>
-					<ParallaxLayer offset={0} speed={0.2}>
+					<ParallaxLayer offset={0} speed={-0.34}>
 						<div
 							class="animation_layer parallax"
 							id="mountain"
 						></div>
 					</ParallaxLayer>
-					<ParallaxLayer offset={0} speed={0.1}>
+					<ParallaxLayer offset={0} speed={-0.24}>
 						<div
 							class="animation_layer parallax"
 							id="jungle1"
 						></div>
 					</ParallaxLayer>
-					<ParallaxLayer offset={0} speed={0.35}>
+					<ParallaxLayer offset={0} speed={-0.13}>
 						<div
 							class="animation_layer parallax"
 							id="jungle2"
 						></div>
 					</ParallaxLayer>
-					<ParallaxLayer offset={0} speed={0.5}>
+					<ParallaxLayer offset={0} speed={-0.085}>
 						<div
 							class="animation_layer parallax"
 							id="jungle3"
 						></div>
 					</ParallaxLayer>
-					<ParallaxLayer offset={0} speed={0.6}>
+					<ParallaxLayer offset={0} speed={0}>
 						<div
 							class="animation_layer parallax"
 							id="jungle4"
 						></div>
 					</ParallaxLayer>
-					<ParallaxLayer offset={0} speed={0.4}>
+					<ParallaxLayer offset={0} speed={0}>
 						<div
 							class="animation_layer parallax"
 							id="manonmountain"
 						></div>
 					</ParallaxLayer>
-					<ParallaxLayer offset={0} speed={0.35}>
+					<ParallaxLayer offset={0} speed={0}>
 						<div
 							class="animation_layer parallax"
 							id="jungle5"
 						></div>
 					</ParallaxLayer>
-					<ParallaxLayer offset={0} speed={0.1}>
+					<ParallaxLayer offset={0} speed={-0.2}>
 						<div className="pname-container">
 							<div className="name-container">
-								<img
-									style={{
-                    border: '5px solid black',
-										borderRadius: "50%",
-										opacity: "93%",
-										overflow: "hidden",
-										height: "100%",
-										width: "100%",
-									}}
-									src={profile}
-									alt="GitHub Logo"
-								/>
-								<h1> &lt;/&gt; ArminRezz</h1>
+								<h1> ArminRezz</h1>
 							</div>
 						</div>
 					</ParallaxLayer>
-					<ParallaxLayer offset={0} speed={0.3}>
+					<ParallaxLayer offset={0} speed={0}>
 						<div className="page-0-content">
 							<img
 								style={{
-									filter: "grayscale(100%)",
-									margin: "3rem",
-									height: "200px",
-									width: "320px",
+									marginBottom: "3.8rem",
+									height: "7rem",
+									width: "13rem",
 								}}
 								src={umdLogo}
 								alt="UMD Logo"
@@ -101,8 +92,8 @@ function App() {
 								<img
 									style={{
 										margin: "4rem",
-										height: "200px",
-										width: "200px",
+										height: "7rem",
+										width: "7rem",
 									}}
 									src={gitLogo}
 									alt="GitHub Logo"
@@ -116,14 +107,28 @@ function App() {
 								<img
 									style={{
 										margin: "4rem",
-										filter: "grayscale(80%)",
-										height: "200px",
-										width: "200px",
+										height: "7rem",
+										width: "7rem",
 									}}
 									src={linkedinLogo}
 									alt="GitHub Logo"
 								/>
 							</a>
+						</div>
+					</ParallaxLayer>
+					<ParallaxLayer offset={1} speed={0}>
+						<div className="Experience">
+							<h1> Dev Experiences </h1>
+						</div>
+					</ParallaxLayer>
+					<ParallaxLayer offset={2}>
+						<div className="Experience">
+							<h1> Dev Projects </h1>
+						</div>
+					</ParallaxLayer>
+					<ParallaxLayer offset={3}>
+						<div className="Experience">
+							<h1> Contact Me </h1>
 						</div>
 					</ParallaxLayer>
 				</Parallax>

@@ -1,51 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&family=Space+Mono:ital,wght@0,400;1,700&display=swap');
+
 .pname-container {
   display: block;
   text-align: center;
 }
 .name-container {
-  z-index: 20;
   display: inline-block;
   margin-top: 9rem;
 }
 
 .name-container h1{
-  font-weight: bold;
-  font-size: 5rem;
-  font-family:'Courier New', Courier, monospace;
+  font-weight: bolder;
+  font-size: 4.6rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Mono', monospace;
+  font-style: italic;
   opacity: 90%;
   width: 100%;
   color: rgb(255, 255, 255);
 }
 
 #gitLogo {
+  background-color: white;
   background-image: url(./images/githubLogo.png);
   filter: grayscale(100%);
 }
 
 .page-0-content {
   display: block;
-  z-index: 20;
-  margin-top: 63rem;
-  height: 100%;
+  z-index: 5;
   text-align: center;
+  margin-top: 40rem;
+  width: 100%;
+  background-color: rgb(0, 12, 0);
 }
 
 .animation, .animation_layer {
-	height: 1000px;
+	height: 75vh;
 }
 
 .animation {
   display: block;
 	position: relative;
-	z-index: 10;
+	z-index: 1;
 }
 
 .animation_layer {
-	background-position: bottom center;
-	background-size: auto 1038px;
-	background-repeat: repeat-x;
+	background-position: top center;
+	background-size: auto 75vh;
 	width: 100%;
-	position: absolute;
 }
 
 .animation_layer.parallax {
@@ -54,40 +57,61 @@
 
 #artback {
   background-image: url(./images/background.png);
-  filter: grayscale(100%);
+  filter: hue-rotate(150deg);
 }
 
 #mountain {
   background-image: url(./images/mountains.png);
-  filter: grayscale(100%);
+  filter: hue-rotate(190deg);
 }
 
 #jungle1 {
   background-image: url(./images/jungle1.png);
   filter: grayscale(100%);
+  filter: hue-rotate(240deg);
 }
 
 #jungle2 {
   background-image: url(./images/jungle2.png);
   filter: grayscale(100%);
+  filter: hue-rotate(250deg);
 }
 
 #jungle3 {
   background-image: url(./images/jungle3.png);
   filter: grayscale(100%);
+  filter: hue-rotate(800deg);
 }
 
 #jungle4 {
   background-image: url(./images/jungle4.png);
   filter: grayscale(100%);
+  filter: hue-rotate(820deg);
 }
 
 #jungle5 {
   background-image: url(./images/jungle5.png);
   filter: grayscale(100%);
+  filter: hue-rotate(820deg);
 }
 
 #manonmountain {
   background-image: url(./images/man_on_mountain.png);
   filter: grayscale(100%);
+  filter: hue-rotate(830deg);
+}
+
+
+
+.Experience {
+  background-color: rgb(0, 12, 0);
+  height: 100vh;
+}
+
+.Experience h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Mono', monospace;
+  font-style: italic;
+  color: white;
+  text-align: center;
 }
