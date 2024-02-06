@@ -27,5 +27,7 @@ li {
 }
 
 li:hover {
-	background-color: #d900ff; /* Change the color on hover */
+	background-color: rgb(5,12,1); /* Change the color on hover */
+	color: white;
+	transition: 1s;
 }

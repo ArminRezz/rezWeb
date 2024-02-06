@@ -92,7 +92,6 @@
   filter: hue-rotate(830deg);
 }
 
-
 .page1-container {
   height: 100%;
   background-color: rgb(3, 12, 0);
@@ -100,14 +99,14 @@
 
 .page2-container {
   height: 100%;
-  background-color: rgb(3, 12, 0);
-  border: 2px solid blue
+  background-color: rgb(3, 11, 0);
+  border: 1px solid rgb(3,12,0);
 }
 
 .page3-container {
   height: 100%;
-  background-color: rgb(3, 12, 0);
-  border: 2px solid purple;
+  background-color: rgb(3, 11, 0);
+  border: 1px solid rgb(3,12,0);
 }
 
 .Experience {
@@ -116,4 +115,11 @@
   font-style: italic;
   color: white;
   text-align: center;
+  padding-top: 1rem;
+}
+
+.card-row {
+  margin-top: 5rem;
+  display: flex;
+  justify-content: space-around; /* Adjust to space evenly or use 'space-between' */
 }

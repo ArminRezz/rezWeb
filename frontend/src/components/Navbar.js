@@ -6,11 +6,14 @@ const Navbar = ({ goToOffset }) => {
 		<nav className="navbar">
 			<ul>
                 <li> - - - </li>
-				<li onClick={() => goToOffset(0)}>Home</li>
-				<li onClick={() => goToOffset(1)}>Experiences</li>
-				<li onClick={() => goToOffset(2)}>Projects</li>
-				<li onClick={() => goToOffset(3)}>Contact Me</li>
-                <li> - - - </li>
+				<li onClick={() => goToOffset(0)}>Welcome</li>
+				<li onClick={() => goToOffset(1)}>to my</li>
+				<li onClick={() => goToOffset(2)}>Experiences</li>
+				<li onClick={() => goToOffset(3)}>Education</li>
+				<li onClick={() => goToOffset(4)}>& Contacts</li>
+                <li> - </li>
+				<li onClick={() => goToOffset(3)}>Git</li>
+				<li onClick={() => goToOffset(3)}>lnkdn</li>
 			</ul>
 		</nav>
 	)

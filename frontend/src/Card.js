@@ -27,10 +27,10 @@ export default function Card() {
 		const purchase = purchaseRef.current
 		const desc = descRef.current
 		title.style.transform = "translateZ(150px)"
-		img.style.transform = "translateZ(100px) rotateZ(-45deg)"
+		img.style.transform = "translateZ(100px) rotateZ(-30deg)"
 		sizesBox.style.transform = "translateZ(100px)"
 		purchase.style.transform = "translateZ(75px)"
-		desc.style.transform = "translateZ(75px)"
+		desc.style.transform = "translateZ(200px)"
 	}
 	function handleMouseLeave() {
 		setXRotation(0)
@@ -63,9 +63,10 @@ export default function Card() {
 				alt="Nike-Shoe"
 				className="sneaaker-img"
 			/>
-			<h1 className="title" ref={titleRef}>
+			<h2 className="title" ref={titleRef}>
 				Machine Learning Intern
-			</h1>
+					Summer 2023
+			</h2>
 			<p className="sizes-box" ref={descRef}>
 				Created an xgboost model for ranking ges disc data collections
 				in a way that is benificial for the scientists and researcheres.

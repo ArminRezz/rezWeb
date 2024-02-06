@@ -2,9 +2,9 @@
 .card {
 	transform-style: preserve-3d;
 	position: relative;
-	padding: 0px;
-	width: 20rem;
-	height: 40rem;
+	padding: 10px;
+	width: 23rem;
+	height: 35rem;
 	border-radius: 20px;
 	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 	display: flex;
@@ -13,17 +13,18 @@
 	justify-content: space-around;
 	background: radial-gradient(farthest-side at 30% 30%, rgb(0,12,0), rgb(5, 24,0));
 	transition: all 0.1s ease;
-	border: 1px solid red;
-	margin-left: 5rem;
+	border: 1px solid rgb(32, 47, 0);
 }
+
 .sneaaker-img {
 	position: relative;
-	width: 90%;
+	width: 65%;
 	transition: all 0.5s ease;
+	opacity: 65%;
 }
 .title,
 .card p {
-	width: 100%;
+	width: 90%;
 	color: white;
 }
 .sizes-box {

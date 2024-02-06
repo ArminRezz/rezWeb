@@ -4,27 +4,6 @@ import "./App.css"
 import Navbar from "./components/Navbar"
 import Card from "./Card"
 
-const events = [
-	{
-		id: 1,
-		date: "2020",
-		title: "Started Coding Journey",
-		description: "Began learning programming and web development.",
-	},
-	{
-		id: 2,
-		date: "2021",
-		title: "First React Project",
-		description: "Built my first React application.",
-	},
-	{
-		id: 3,
-		date: "2022",
-		title: "Web Development Internship",
-		description: "Gained practical experience through an internship.",
-	},
-]
-
 function App() {
 	let parallaxRef = React.useRef(null)
 
@@ -38,7 +17,7 @@ function App() {
 			<div className="App">
 				<Navbar goToOffset={goToOffset} />
 				<Parallax
-					pages={4}
+					pages={5}
 					style={{
 						top: "0",
 						left: "0",
@@ -101,29 +80,54 @@ function App() {
 							</div>
 						</div>
 					</ParallaxLayer>
-
-
 					<ParallaxLayer offset={1}>
 						<div className="page1-container">
 							<div className="Experience">
-								<div><h1> Experience </h1></div>
 								<div>
+									<h1>- Me -</h1>
+								</div>
+								<div className="card-row">
+									<Card />
+									<Card />
 									<Card />
 								</div>
 							</div>
 						</div>
 					</ParallaxLayer>
+
 					<ParallaxLayer offset={2}>
-						<div className="page2-container">
+						<div className="page1-container">
+							ƒ
 							<div className="Experience">
-								<h1> Projects </h1>
+								<div>
+									<h1> Experiences </h1>
+								</div>
+								<div className="card-row">
+									<Card />
+									<Card />
+									<Card />
+								</div>
 							</div>
 						</div>
 					</ParallaxLayer>
 					<ParallaxLayer offset={3}>
+						<div className="page2-container">
+							<div className="Experience">
+								<div>
+									<h1> Education </h1>
+								</div>
+								<div className="card-row">
+									<Card />
+									<Card />
+									<Card />
+								</div>
+							</div>
+						</div>
+					</ParallaxLayer>
+					<ParallaxLayer offset={4}>
 						<div className="page3-container">
 							<div className="Experience">
-								<h1> Contact Me </h1>
+								<h1> Contacts </h1>
 							</div>
 						</div>
 					</ParallaxLayer>
