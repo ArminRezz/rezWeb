@@ -82,14 +82,74 @@ function App() {
 					</ParallaxLayer>
 					<ParallaxLayer offset={1}>
 						<div className="page1-container">
-							<div className="Experience">
-								<div>
+							<div className="Me">
+								<div
+									style={{
+										marginTop: "2%",
+										textAlign: "center",
+									}}
+								>
 									<h1>- Me -</h1>
 								</div>
-								<div className="card-row">
-									<Card />
-									<Card />
-									<Card />
+								<div className="slide">
+									<img
+										style={{
+											border: "7px solid white",
+											marginLeft: "5%",
+											borderRadius: "50%",
+											width: "28%",
+											height: "30%",
+											marginRight: "2rem",
+										}}
+										src={require("./images/profile.jpeg")}
+										alt="Your Image"
+									/>
+									<img
+										style={{
+											marginLeft: "3%",
+											borderRadius: "5%",
+											width: "22%",
+											height: "30%",
+											marginRight: "2rem",
+										}}
+										src={require("./images/profile2.jpg")}
+										alt="Your Image"
+									/>
+									<img
+										style={{
+											border: "2px solid white",
+											marginLeft: "5rem",
+											borderRadius: "5%",
+											width: "20%",
+											height: "30%",
+										}}
+										src={require("./images/myCar.jpg")}
+										alt="Your Image"
+									/>
+									<p>
+										Greetings! I'm Armin Rezaiyan-Nojani, a
+										computer science student passionate
+										about coding and problem-solving. At
+										University of Maryland has equipped me
+										with a strong foundation in algorithms,
+										data structures, and software
+										development. With a vision to contribute
+										to the tech industry, I'm eager to apply
+										my skills, including proficiency in C,
+										C++, Java, Python, React, and
+										collaborate on innovative projects. As I
+										transition into my career, I am actively
+										seeking roles that allow me to make a
+										meaningful impact. I am particularly
+										interested in positions where I can
+										continuously learn and grow,
+										contributing to projects that address
+										real-world challenges. I am open to
+										opportunities in Machine Learning and
+										excited about the prospect of shaping
+										the future of technology. Let's connect
+										and explore possibilities together!
+									</p>
 								</div>
 							</div>
 						</div>
@@ -97,15 +157,26 @@ function App() {
 
 					<ParallaxLayer offset={2}>
 						<div className="page1-container">
-							ƒ
 							<div className="Experience">
 								<div>
 									<h1> Experiences </h1>
 								</div>
 								<div className="card-row">
-									<Card />
-									<Card />
-									<Card />
+									<Card
+										imageSrc={require("./images/nasa.png")}
+										title="AI and ML Intern Summer 2024"
+										description="Utilized the ML concept of 'Learning to Rank', Created an xgboost model for ranking ges disc data collections in a way that is beneficial for scientists and researchers."
+									/>
+									<Card
+										imageSrc={require("./images/nasa.png")}
+										title="AI and ML Intern Summer 2023"
+										description="Collaborated on developing the primary knowledge graph and a subsidiary one focusing on PDF analysis, significantly contributing to a comprehensive understanding of datasets through bi-weekly meetings."
+									/>
+									<Card
+										imageSrc={require("./images/nistLogo.png")}
+										title="Computational Modeling Intern Summer 2023"
+										description="Conducted research on the relationship between dielectric energy in the human body and radio frequency transmissions from wearable wireless devices while interning at NIST with the aim of optimizing antenna performance."
+									/>
 								</div>
 							</div>
 						</div>
@@ -117,9 +188,21 @@ function App() {
 									<h1> Education </h1>
 								</div>
 								<div className="card-row">
-									<Card />
-									<Card />
-									<Card />
+									<Card
+										imageSrc={require("./images/woottonLogo.png")}
+										title="Thomas S. Wootton"
+										description="Played JV, Varsity, and club soccer."
+									/>
+									<Card
+										imageSrc={require("./images/mcLogo.png")}
+										title="Montgomery College"
+										description="Played JV, Varsity, and club soccer."
+									/>
+									<Card
+										imageSrc={require("./images/umdLogo.png")}
+										title="University of Maryland - College Park"
+										description="Played JV, Varsity, and club soccer."
+									/>
 								</div>
 							</div>
 						</div>

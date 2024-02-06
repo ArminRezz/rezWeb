@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react"
 import "./components/styling/Card.css"
 
-export default function Card() {
+export default function Card({ imageSrc, title, description }) {
 	const [xRotation, setXRotation] = useState(0)
 	const [yRotation, setYRotation] = useState(0)
 	const cardRef = useRef(null)
@@ -20,6 +20,7 @@ export default function Card() {
 		setXRotation((y / height) * mult)
 		setYRotation((x / width) * mult)
 	}
+
 	function handleMouseEnter() {
 		const img = imgRef.current
 		const title = titleRef.current
@@ -32,6 +33,7 @@ export default function Card() {
 		purchase.style.transform = "translateZ(75px)"
 		desc.style.transform = "translateZ(200px)"
 	}
+
 	function handleMouseLeave() {
 		setXRotation(0)
 		setYRotation(0)
@@ -59,17 +61,15 @@ export default function Card() {
 		>
 			<img
 				ref={imgRef}
-				src={require("./images/nasa.png")}
-				alt="Nike-Shoe"
+				src={imageSrc}
+				alt="Card Image"
 				className="sneaaker-img"
 			/>
 			<h2 className="title" ref={titleRef}>
-				Machine Learning Intern
-					Summer 2023
+				{title}
 			</h2>
 			<p className="sizes-box" ref={descRef}>
-				Created an xgboost model for ranking ges disc data collections
-				in a way that is benificial for the scientists and researcheres.
+				{description}
 			</p>
 			<div className="button-box" ref={purchaseRef}></div>
 		</div>

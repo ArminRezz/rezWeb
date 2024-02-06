@@ -94,16 +94,23 @@
 
 .page1-container {
   height: 100%;
-  background-color: rgb(3, 12, 0);
+  background-color: rgb(3, 11, 0);
+  border: 1px solid rgb(3,12,0);
 }
 
 .page2-container {
+  height: 100%;
+  background-color: rgb(3, 12, 0);
+  border: 1px solid rgb(3,12,0);
+}
+
+.page3-container {
   height: 100%;
   background-color: rgb(3, 11, 0);
   border: 1px solid rgb(3,12,0);
 }
 
-.page3-container {
+.page4-container {
   height: 100%;
   background-color: rgb(3, 11, 0);
   border: 1px solid rgb(3,12,0);
@@ -116,6 +123,41 @@
   color: white;
   text-align: center;
   padding-top: 1rem;
+}
+
+.Me {
+  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Mono', monospace;
+  font-style: italic;
+  color: white;
+  justify-content: flex;
+  justify-content: space-around;
+  width: 80%;
+  height: 90%;
+  margin-left: 10%; 
+}
+
+.Me p{
+  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Mono', monospace;
+  font-style: italic;
+  font-size: large;
+  color: white;
+  justify-content: flex;
+  justify-content: space-around;
+  border: 2px solid rgb(255, 255, 255);
+  width: 70%;
+  margin-top: 3%;
+  margin-left: 15%; 
+  padding-top: 2%;
+  padding-bottom: 2%; 
+  padding-left: 1rem;
+  padding-right: 1rem;
+  text-align: center;
+}
+
+.slide {
+  margin-top: 2%;
 }
 
 .card-row {
