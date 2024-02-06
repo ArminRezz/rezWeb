@@ -1,21 +1,49 @@
+import React from "react"
 import { Parallax, ParallaxLayer } from "@react-spring/parallax"
 import "./App.css"
-import gitLogo from "./images/githubLogo.png"
-import linkedinLogo from "./images/linkedInLogo.png"
-import profile from "./images/profile.jpeg"
-import umdLogo from "./images/umdLogo.png"
+import Navbar from "./components/Navbar"
+import Card from "./Card"
+
+const events = [
+	{
+		id: 1,
+		date: "2020",
+		title: "Started Coding Journey",
+		description: "Began learning programming and web development.",
+	},
+	{
+		id: 2,
+		date: "2021",
+		title: "First React Project",
+		description: "Built my first React application.",
+	},
+	{
+		id: 3,
+		date: "2022",
+		title: "Web Development Internship",
+		description: "Gained practical experience through an internship.",
+	},
+]
 
 function App() {
+	let parallaxRef = React.useRef(null)
+
+	const goToOffset = (offset) => {
+		if (parallaxRef && parallaxRef.current) {
+			parallaxRef.current.scrollTo(offset)
+		}
+	}
 	return (
 		<>
 			<div className="App">
+				<Navbar goToOffset={goToOffset} />
 				<Parallax
 					pages={4}
 					style={{
-						backgroundColor: "rgb(0, 12, 0)",
 						top: "0",
 						left: "0",
 					}}
+					ref={parallaxRef}
 					class="animation"
 				>
 					<ParallaxLayer offset={0} speed={-0.38}>
@@ -69,66 +97,34 @@ function App() {
 					<ParallaxLayer offset={0} speed={-0.2}>
 						<div className="pname-container">
 							<div className="name-container">
-								<h1> ArminRezz</h1>
+								<h1> ArminRezz </h1>
 							</div>
 						</div>
 					</ParallaxLayer>
-					<ParallaxLayer offset={0} speed={0}>
-						<div className="page-0-content">
-							<img
-								style={{
-									marginBottom: "3.8rem",
-									height: "7rem",
-									width: "13rem",
-								}}
-								src={umdLogo}
-								alt="UMD Logo"
-							/>
-							<a
-								href="https://github.com"
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								<img
-									style={{
-										margin: "4rem",
-										height: "7rem",
-										width: "7rem",
-									}}
-									src={gitLogo}
-									alt="GitHub Logo"
-								/>
-							</a>
-							<a
-								href="https://linkedin.com"
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								<img
-									style={{
-										margin: "4rem",
-										height: "7rem",
-										width: "7rem",
-									}}
-									src={linkedinLogo}
-									alt="GitHub Logo"
-								/>
-							</a>
-						</div>
-					</ParallaxLayer>
-					<ParallaxLayer offset={1} speed={0}>
-						<div className="Experience">
-							<h1> Dev Experiences </h1>
+
+
+					<ParallaxLayer offset={1}>
+						<div className="page1-container">
+							<div className="Experience">
+								<div><h1> Experience </h1></div>
+								<div>
+									<Card />
+								</div>
+							</div>
 						</div>
 					</ParallaxLayer>
 					<ParallaxLayer offset={2}>
-						<div className="Experience">
-							<h1> Dev Projects </h1>
+						<div className="page2-container">
+							<div className="Experience">
+								<h1> Projects </h1>
+							</div>
 						</div>
 					</ParallaxLayer>
 					<ParallaxLayer offset={3}>
-						<div className="Experience">
-							<h1> Contact Me </h1>
+						<div className="page3-container">
+							<div className="Experience">
+								<h1> Contact Me </h1>
+							</div>
 						</div>
 					</ParallaxLayer>
 				</Parallax>

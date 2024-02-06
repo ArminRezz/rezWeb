@@ -1,0 +1,31 @@
+/* Navbar.css */
+.navbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background-color: #ffffff;
+	z-index: 1000;
+}
+
+ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+}
+
+li {
+	margin-right: 2rem;
+	cursor: pointer;
+	font-family: "Space Grotesk", sans-serif;
+	font-family: "Space Mono", monospace;
+	font-style: italic;
+    font-size: large;
+	color: rgb(0, 0, 0);
+}
+
+li:hover {
+	background-color: #d900ff; /* Change the color on hover */
+}

@@ -1,0 +1,35 @@
+/* ======================================================== */
+.card {
+	transform-style: preserve-3d;
+	position: relative;
+	padding: 0px;
+	width: 20rem;
+	height: 40rem;
+	border-radius: 20px;
+	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: space-around;
+	background: radial-gradient(farthest-side at 30% 30%, rgb(0,12,0), rgb(5, 24,0));
+	transition: all 0.1s ease;
+	border: 1px solid red;
+	margin-left: 5rem;
+}
+.sneaaker-img {
+	position: relative;
+	width: 90%;
+	transition: all 0.5s ease;
+}
+.title,
+.card p {
+	width: 100%;
+	color: white;
+}
+.sizes-box {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+	gap: 10px;
+}

@@ -6,12 +6,12 @@
 }
 .name-container {
   display: inline-block;
-  margin-top: 9rem;
+  margin-top: 18rem;
 }
 
 .name-container h1{
   font-weight: bolder;
-  font-size: 4.6rem;
+  font-size: 5.6rem;
   font-family: 'Space Grotesk', sans-serif;
   font-family: 'Space Mono', monospace;
   font-style: italic;
@@ -26,17 +26,8 @@
   filter: grayscale(100%);
 }
 
-.page-0-content {
-  display: block;
-  z-index: 5;
-  text-align: center;
-  margin-top: 40rem;
-  width: 100%;
-  background-color: rgb(0, 12, 0);
-}
-
 .animation, .animation_layer {
-	height: 75vh;
+	height: 103%;
 }
 
 .animation {
@@ -47,7 +38,7 @@
 
 .animation_layer {
 	background-position: top center;
-	background-size: auto 75vh;
+	background-size: auto 103%;
 	width: 100%;
 }
 
@@ -102,13 +93,24 @@
 }
 
 
-
-.Experience {
-  background-color: rgb(0, 12, 0);
-  height: 100vh;
+.page1-container {
+  height: 100%;
+  background-color: rgb(3, 12, 0);
 }
 
-.Experience h1 {
+.page2-container {
+  height: 100%;
+  background-color: rgb(3, 12, 0);
+  border: 2px solid blue
+}
+
+.page3-container {
+  height: 100%;
+  background-color: rgb(3, 12, 0);
+  border: 2px solid purple;
+}
+
+.Experience {
   font-family: 'Space Grotesk', sans-serif;
   font-family: 'Space Mono', monospace;
   font-style: italic;
