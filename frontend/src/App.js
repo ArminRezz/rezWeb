@@ -3,6 +3,7 @@ import { Parallax, ParallaxLayer } from "@react-spring/parallax"
 import "./App.css"
 import Navbar from "./components/Navbar"
 import Card from "./Card"
+import ContactForm from './components/ContactForm';
 
 function App() {
 	let parallaxRef = React.useRef(null)
@@ -210,7 +211,11 @@ function App() {
 					<ParallaxLayer offset={4}>
 						<div className="page3-container">
 							<div className="Experience">
+								<br></br>
 								<h1> Contacts </h1>
+								<br></br>
+								<br></br>
+								<ContactForm /> 
 							</div>
 						</div>
 					</ParallaxLayer>
