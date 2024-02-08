@@ -3,7 +3,7 @@ import { Parallax, ParallaxLayer } from "@react-spring/parallax"
 import "./App.css"
 import Navbar from "./components/Navbar"
 import Card from "./Card"
-import ContactForm from './components/ContactForm';
+import ContactForm from "./components/ContactForm"
 
 function App() {
 	let parallaxRef = React.useRef(null)
@@ -90,7 +90,9 @@ function App() {
 										textAlign: "center",
 									}}
 								>
-									<h1>🇮🇷&nbsp;&nbsp;&nbsp;&nbsp;Me&nbsp;&nbsp;&nbsp;&nbsp;🇭🇺</h1>
+									<h1>
+										🇮🇷&nbsp;&nbsp;&nbsp;&nbsp;Me&nbsp;&nbsp;&nbsp;&nbsp;🇭🇺
+									</h1>
 								</div>
 								<div className="slide">
 									<img
@@ -128,28 +130,25 @@ function App() {
 										alt=""
 									/>
 									<p>
-										Greetings! I'm Armin Rezaiyan-Nojani, a
-										computer science student passionate
-										about coding and problem-solving. At
-										University of Maryland has equipped me
-										with a strong foundation in algorithms,
-										data structures, and software
-										development. With a vision to contribute
-										to the tech industry, I'm eager to apply
-										my skills, including proficiency in C,
-										C++, Java, Python, React, and
-										collaborate on innovative projects. As I
-										transition into my career, I am actively
-										seeking roles that allow me to make a
-										meaningful impact. I am particularly
-										interested in positions where I can
-										continuously learn and grow,
-										contributing to projects that address
-										real-world challenges. I am open to
-										opportunities in Machine Learning and
-										excited about the prospect of shaping
-										the future of technology. Let's connect
-										and explore possibilities together!
+										Energetic Computer Science student,
+										boasting a unique educational journey
+										that includes completing two years of
+										college coursework during high school
+										and internships at prestigious
+										institutions like NASA and NIST. I've
+										solidified my expertise in software
+										development and machine learning,
+										contributing to projects ranging from
+										web development, to knowledge graph
+										construction, to antenna performance
+										optimization. Collaborative by nature, I
+										thrive in diverse team environments,
+										driven by a passion for innovation and a
+										commitment to continuous learning. Eager
+										to apply my multidisciplinary education
+										and practical skills to contribute
+										meaningfully to cutting-edge projects
+										and further excel under mentorship.
 									</p>
 								</div>
 							</div>
@@ -215,7 +214,7 @@ function App() {
 								<h1> Contacts 💬 </h1>
 								<br></br>
 								<br></br>
-								<ContactForm /> 
+								<ContactForm />
 							</div>
 						</div>
 					</ParallaxLayer>
