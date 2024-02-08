@@ -90,12 +90,12 @@ function App() {
 										textAlign: "center",
 									}}
 								>
-									<h1>- Me -</h1>
+									<h1>🇮🇷&nbsp;&nbsp;&nbsp;&nbsp;Me&nbsp;&nbsp;&nbsp;&nbsp;🇭🇺</h1>
 								</div>
 								<div className="slide">
 									<img
 										style={{
-											border: "7px solid white",
+											border: "4px solid white",
 											marginLeft: "5%",
 											borderRadius: "50%",
 											width: "28%",
@@ -160,7 +160,7 @@ function App() {
 						<div className="page1-container">
 							<div className="Experience">
 								<div>
-									<h1> Experiences </h1>
+									<h1> 🧠 Experiences 🧠 </h1>
 								</div>
 								<div className="card-row">
 									<Card
@@ -186,7 +186,7 @@ function App() {
 						<div className="page2-container">
 							<div className="Experience">
 								<div>
-									<h1> Education </h1>
+									<h1> 📖 Education 📖</h1>
 								</div>
 								<div className="card-row">
 									<Card
@@ -212,7 +212,7 @@ function App() {
 						<div className="page3-container">
 							<div className="Experience">
 								<br></br>
-								<h1> Contacts </h1>
+								<h1> Contacts 💬 </h1>
 								<br></br>
 								<br></br>
 								<ContactForm /> 
