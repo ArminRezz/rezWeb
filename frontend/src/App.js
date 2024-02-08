@@ -103,7 +103,6 @@ function App() {
 											marginRight: "2rem",
 										}}
 										src={require("./images/profile.jpeg")}
-										alt="Your Image"
 									/>
 									<img
 										style={{
@@ -114,7 +113,6 @@ function App() {
 											marginRight: "2rem",
 										}}
 										src={require("./images/profile2.jpg")}
-										alt="Your Image"
 									/>
 									<img
 										style={{
@@ -125,7 +123,6 @@ function App() {
 											height: "30%",
 										}}
 										src={require("./images/myCar.jpg")}
-										alt="Your Image"
 									/>
 									<p>
 										Greetings! I'm Armin Rezaiyan-Nojani, a

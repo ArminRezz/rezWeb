@@ -62,7 +62,6 @@ export default function Card({ imageSrc, title, description }) {
 			<img
 				ref={imgRef}
 				src={imageSrc}
-				alt="Card Image"
 				className="sneaaker-img"
 			/>
 			<h2 className="title" ref={titleRef}>
