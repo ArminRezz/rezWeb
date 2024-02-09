@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react"
 import "./components/styling/Card.css"
 
-export default function Card({ imageSrc, title, description }) {
+export default function Card({ imageSrc, imgStyle, title, description, stylesheet }) {
 	const [xRotation, setXRotation] = useState(0)
 	const [yRotation, setYRotation] = useState(0)
 	const cardRef = useRef(null)
@@ -50,7 +50,7 @@ export default function Card({ imageSrc, title, description }) {
 
 	return (
 		<div
-			className="card"
+			className={`card ${stylesheet}`}
 			ref={cardRef}
 			style={{
 				transform: `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`,
@@ -62,7 +62,7 @@ export default function Card({ imageSrc, title, description }) {
 			<img
 				ref={imgRef}
 				src={imageSrc}
-				className="sneaaker-img"
+				className={imgStyle}
 				alt=""
 			/>
 			<h2 className="title" ref={titleRef}>

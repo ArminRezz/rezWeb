@@ -86,10 +86,10 @@ function App() {
 							<div className="Me">
 								<div
 									style={{
-										marginTop: "2%",
 										textAlign: "center",
 									}}
 								>
+									<br></br>
 									<h1>
 										🇮🇷&nbsp;&nbsp;&nbsp;&nbsp;Me&nbsp;&nbsp;&nbsp;&nbsp;🇭🇺
 									</h1>
@@ -163,18 +163,21 @@ function App() {
 								</div>
 								<div className="card-row">
 									<Card
+										imgStyle="img"
 										imageSrc={require("./images/nasa.png")}
-										title="AI and ML Intern Summer 2024"
+										title="AI and ML Intern Summer 2023"
 										description="Utilized the ML concept of 'Learning to Rank', Created an xgboost model for ranking ges disc data collections in a way that is beneficial for scientists and researchers."
 									/>
 									<Card
+										imgStyle="img"	
 										imageSrc={require("./images/nasa.png")}
-										title="AI and ML Intern Summer 2023"
+										title="AI and ML Intern Summer 2022"
 										description="Collaborated on developing the primary knowledge graph and a subsidiary one focusing on PDF analysis, significantly contributing to a comprehensive understanding of datasets through bi-weekly meetings."
 									/>
 									<Card
+										imgStyle="img"
 										imageSrc={require("./images/nistLogo.png")}
-										title="Computational Modeling Intern Summer 2023"
+										title="Computational Modeling Intern Summer 2022"
 										description="Conducted research on the relationship between dielectric energy in the human body and radio frequency transmissions from wearable wireless devices while interning at NIST with the aim of optimizing antenna performance."
 									/>
 								</div>
@@ -189,19 +192,25 @@ function App() {
 								</div>
 								<div className="card-row">
 									<Card
+										stylesheet="wootton"
+										imgStyle="img"
 										imageSrc={require("./images/woottonLogo.png")}
 										title="Thomas S. Wootton"
-										description="Played JV, Varsity, and club soccer."
+										description="Member of Academy of Information Technology (AOIT). Played Varsity soccer. Graduated May 2023."
 									/>
 									<Card
+										stylesheet="MC"
+										imgStyle="img-MC"
 										imageSrc={require("./images/mcLogo.png")}
 										title="Montgomery College"
-										description="Played JV, Varsity, and club soccer."
+										description="Member of Early College program. Graduated May 2023 with an Associates Degree in Computer Science."
 									/>
 									<Card
+										stylesheet="wootton"
+										imgStyle="img"
 										imageSrc={require("./images/umdLogo.png")}
 										title="University of Maryland - College Park"
-										description="Played JV, Varsity, and club soccer."
+										description="Started Jan 2024: B.S, Computer Science, Striving for Masters, Current classes: STAT400, CMSC216"
 									/>
 								</div>
 							</div>

@@ -15,12 +15,52 @@
 	border: 1px solid rgb(77, 18, 255);
 }
 
-.sneaaker-img {
+.card.wootton {
+	transform-style: preserve-3d;
+	position: relative;
+	width: 26%;
+	height: 36rem;
+	border-radius: 20px;
+	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: space-around;
+	background: radial-gradient(farthest-side at 20% 20%, rgb(0,12,0), rgb(0, 0, 0));
+	transition: all 0.1s ease;
+	border: 1px solid rgb(77, 18, 255);
+}
+
+.card.MC {
+	transform-style: preserve-3d;
+	position: relative;
+	width: 26%;
+	height: 36rem;
+	border-radius: 20px;
+	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: space-around;
+	background: radial-gradient(farthest-side at 20% 20%, rgb(0,12,0), rgb(0, 0, 0));
+	transition: all 0.1s ease;
+	border: 1px solid rgb(77, 18, 255);
+}
+
+.img {
 	position: relative;
 	width: 65%;
 	transition: all 0.5s ease;
-	opacity: 86%;
+	opacity: 100%;
 }
+
+.img-MC {
+	position: relative;
+	width: 70%;
+	transition: all 0.5s ease;
+	opacity: 100%;
+}
+
 .title,
 .card p {
 	width: 90%;

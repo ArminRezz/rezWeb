@@ -1,47 +1,68 @@
 .contact-form {
-	max-width: 500px;
-	margin: 0 auto;
-	padding: 20px;
-	border: 1px solid #ccc;
-	border-radius: 5px;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow for depth */
 }
 
 .contact-form label {
-	display: block;
-	margin-bottom: 5px;
+    display: block;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #ffffff;
 }
 
 .contact-form input[type="text"],
 .contact-form input[type="email"],
 .contact-form textarea {
-	width: 100%;
-	padding: 10px;
-	margin-bottom: 15px;
-	border: 1px solid #ccc;
-	border-radius: 5px;
-	box-sizing: border-box;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 16px;
+    color: #393939;
+    transition: border-color 0.3s ease; /* Add transition effect for border color */
 }
 
 .contact-form textarea {
-	height: 150px;
+    height: 150px;
 }
 
 .contact-form input[type="submit"] {
-	width: 100%;
-	padding: 10px;
-	background-color: #007bff;
-	color: #fff;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
+    width: 100%;
+    padding: 12px;
+    background-color: rgb(71, 23, 245);
+    color: #fff;
+	font-family: 'Space Grotesk', sans-serif;
+	font-family: 'Space Mono', monospace;
+	font-style: italic;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease; /* Add transition effect for background color */
 }
 
 .contact-form input[type="submit"]:hover {
-	background-color: #0056b3;
+    background-color: #0056b3;
 }
 
 .contact-form p {
-	margin-top: 10px;
-	font-style: italic;
-	color: #007bff;
+    margin-top: 15px;
+    font-style: italic;
+    color: #007bff;
+    font-size: 16px;
+}
+
+/* Add border styling for input focus */
+.contact-form input[type="text"]:focus,
+.contact-form input[type="email"]:focus,
+.contact-form textarea:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a subtle shadow on focus */
 }
