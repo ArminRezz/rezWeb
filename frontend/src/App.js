@@ -18,7 +18,7 @@ function App() {
 			<div className="App">
 				<Navbar goToOffset={goToOffset} />
 				<Parallax
-					pages={5}
+					pages={6}
 					style={{
 						top: "0",
 						left: "0",
@@ -155,7 +155,7 @@ function App() {
 						</div>
 					</ParallaxLayer>
 
-					<ParallaxLayer offset={2}>
+					<ParallaxLayer offset={2} factor={2}>
 						<div className="page1-container">
 							<div className="Experience">
 								<div>
@@ -166,10 +166,12 @@ function App() {
 										imgStyle="img"
 										imageSrc={require("./images/nasa.png")}
 										title="AI and ML Intern Summer 2023"
-										description="Utilized the ML concept of 'Learning to Rank', Created an xgboost model for ranking ges disc data collections in a way that is beneficial for scientists and researchers."
+										description="Employed Weaviate to develop a subsidiary knowledge graph with the goal of breaking down data in PDFs attached to GES DISC datasets
+										Collaborated with fellow interns to integrate my knowledge graph into a holistic knowledge graph, which resulted in enhanced overall data discoverability and accessibility.
+										"
 									/>
 									<Card
-										imgStyle="img"	
+										imgStyle="img"
 										imageSrc={require("./images/nasa.png")}
 										title="AI and ML Intern Summer 2022"
 										description="Collaborated on developing the primary knowledge graph and a subsidiary one focusing on PDF analysis, significantly contributing to a comprehensive understanding of datasets through bi-weekly meetings."
@@ -181,10 +183,35 @@ function App() {
 										description="Conducted research on the relationship between dielectric energy in the human body and radio frequency transmissions from wearable wireless devices while interning at NIST with the aim of optimizing antenna performance."
 									/>
 								</div>
+								<div className="card-row-1">
+									<Card
+										stylesheet="card-dg"
+										imgStyle="img"
+										imageSrc={require("./images/dullesGlass.png")}
+										title="Part-Time React Developer"
+										description="Developed an entire frontend UI tool focused on designing dynamic pricing tables and other data tables using React with Typescript."
+									/>
+									<Card
+										stylesheet="card-row2"
+										imgStyle="img"
+										imageSrc={require("./images/chessWizards.png")}
+										title="Chess Tutor"
+										description="Engaged in a fulfilling role as a chess instructor at Chess Wizards, merging my passion for the game with teaching and mentoring. Led dynamic and interactive lessons tailored to students of varying ages and skill levels."
+									/>
+									<Card
+										stylesheet="card-dg"
+										imgStyle="img"
+										imageSrc={require("./images/dullesGlass.png")}
+										title="Java/Web Developer"
+										description="Employed Java to validate hardware attribute integrity against legacy system data from Amazon DynamoDB.
+										Adhered to DevOps and Agile methodologies to ensure efficient project development and delivery.
+										Implemented minor frontend adjustments and enhancements, refining user interface functionality and usability."
+									/>
+								</div>
 							</div>
 						</div>
 					</ParallaxLayer>
-					<ParallaxLayer offset={3}>
+					<ParallaxLayer offset={4}>
 						<div className="page2-container">
 							<div className="Experience">
 								<div>
@@ -216,7 +243,7 @@ function App() {
 							</div>
 						</div>
 					</ParallaxLayer>
-					<ParallaxLayer offset={4}>
+					<ParallaxLayer offset={5}>
 						<div className="page3-container">
 							<div className="Experience">
 								<br></br>

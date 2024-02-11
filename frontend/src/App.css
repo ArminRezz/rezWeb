@@ -164,3 +164,9 @@
   display: flex;
   justify-content: space-around; /* Adjust to space evenly or use 'space-between' */
 }
+
+.card-row-1 {
+  margin-top: 10%;
+  display: flex;
+  justify-content: space-around; /* Adjust to space evenly or use 'space-between' */
+}

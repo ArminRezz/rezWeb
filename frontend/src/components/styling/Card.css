@@ -11,7 +11,7 @@
 	flex-direction: column;
 	justify-content: space-around;
 	background: radial-gradient(farthest-side at 20% 20%, rgb(0,12,0), rgb(77, 18, 255));
-	transition: all 0.1s ease;
+	transition: all 0.5s ease;
 	border: 1px solid rgb(77, 18, 255);
 }
 
@@ -27,7 +27,7 @@
 	flex-direction: column;
 	justify-content: space-around;
 	background: radial-gradient(farthest-side at 20% 20%, rgb(0,12,0), rgb(0, 0, 0));
-	transition: all 0.1s ease;
+	transition: all 0.5s ease;
 	border: 1px solid rgb(77, 18, 255);
 }
 
@@ -43,7 +43,39 @@
 	flex-direction: column;
 	justify-content: space-around;
 	background: radial-gradient(farthest-side at 20% 20%, rgb(0,12,0), rgb(0, 0, 0));
-	transition: all 0.1s ease;
+	transition: all 0.5s ease;
+	border: 1px solid rgb(77, 18, 255);
+}
+
+.card-row2 {
+	transform-style: flat;
+	position: relative;
+	width: 26%;
+	height: 36rem;
+	border-radius: 20px;
+	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: space-around;
+	background: radial-gradient(farthest-side at 40% 40%, rgb(0,12,0), rgb(77, 18, 255));
+	transition: all 0.5s ease;
+	border: 1px solid rgb(77, 18, 255);
+}
+
+.card-dg {
+	transform-style: flat;
+	position: relative;
+	width: 26%;
+	height: 36rem;
+	border-radius: 20px;
+	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: space-around;
+	background: radial-gradient(farthest-side at 10% 30%, rgb(215, 206, 255), rgb(77, 18, 255));
+	transition: all 0.5s ease;
 	border: 1px solid rgb(77, 18, 255);
 }
 

@@ -9,8 +9,8 @@ const Navbar = ({ goToOffset }) => {
 				<li onClick={() => goToOffset(0)}>Welcome</li>
 				<li onClick={() => goToOffset(1)}>to me,</li>
 				<li onClick={() => goToOffset(2)}>my experiences,</li>
-				<li onClick={() => goToOffset(3)}>education,</li>
-				<li onClick={() => goToOffset(4)}>and contacts! </li>
+				<li onClick={() => goToOffset(4)}>education,</li>
+				<li onClick={() => goToOffset(5)}>and contacts! </li>
 
 				<li onClick={() => goToOffset(0)}>
 					<a
