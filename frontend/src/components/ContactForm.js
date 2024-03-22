@@ -11,7 +11,7 @@ const ContactForm = () => {
 		setIsSubmitting(true)
 		emailjs
 			.sendForm(
-				"service_bbgf8g6", // service id emailjs
+				"service_dkxtq3h", // service id emailjs
 				"template_3aqhhq8", // template id emailjs
 				e.target,
 				"HWXgun0kLacdui8YF" // public key emailjs
