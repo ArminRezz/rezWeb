@@ -1,0 +1,208 @@
+/**
+ * App Component Styles - CODE EDITOR LAYOUT
+ * 
+ * Vim/VSCode-inspired split-screen layout
+ */
+
+.app.terminal-theme {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main content with editor layout */
+.main-content.editor-layout {
+  position: relative;
+  z-index: 10;
+  margin-top: 60px;
+  margin-left: 250px;
+  margin-bottom: 30px;
+  min-height: calc(100vh - 90px);
+  display: flex;
+  transition: margin-left 0.3s ease;
+}
+
+/* Line numbers column (like in vim/vscode) */
+.line-numbers {
+  position: sticky;
+  top: 60px;
+  left: 0;
+  width: 60px;
+  background: rgba(13, 2, 8, 0.95);
+  border-right: 1px solid var(--color-border);
+  padding: 1rem 0;
+  align-self: flex-start;
+  max-height: calc(100vh - 90px);
+  overflow: hidden;
+}
+
+.line-number {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-align: right;
+  padding: 0 0.75rem;
+  line-height: 1.5;
+  font-family: var(--font-family);
+  user-select: none;
+}
+
+/* Content column */
+.content-column {
+  flex: 1;
+  padding: 0 var(--spacing-md);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Status bar at bottom (like in vim) */
+.status-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: rgba(0, 255, 65, 0.1);
+  border-top: 2px solid var(--color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  font-size: 0.75rem;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.status-left,
+.status-right {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.status-item {
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.status-icon {
+  color: var(--color-primary);
+  font-size: 0.6rem;
+}
+
+/* Section Container - reusable layout */
+.section-container {
+  max-width: 100%;
+  margin: 0;
+  padding: var(--spacing-xl) 0;
+  position: relative;
+}
+
+/* Section Title - with file comment style */
+.section-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  margin-bottom: var(--spacing-lg);
+  color: var(--color-primary);
+  position: relative;
+  padding-left: var(--spacing-sm);
+  border-left: 4px solid var(--color-primary);
+}
+
+.section-title::before {
+  content: '//';
+  position: absolute;
+  left: calc(var(--spacing-sm) * -3);
+  color: var(--color-comment);
+}
+
+/* Add section separators */
+section:not(:last-child)::after {
+  content: '';
+  display: block;
+  margin: var(--spacing-xl) 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-border) 20%,
+    var(--color-border) 80%,
+    transparent
+  );
+}
+
+/* Code block styling for content */
+section {
+  position: relative;
+}
+
+section::before {
+  content: attr(id) '() {';
+  position: absolute;
+  top: 0;
+  left: calc(var(--spacing-md) * -1);
+  font-size: 0.85rem;
+  color: var(--color-comment);
+  opacity: 0.5;
+}
+
+section::after {
+  content: '}';
+  position: absolute;
+  bottom: var(--spacing-xl);
+  left: calc(var(--spacing-md) * -1);
+  font-size: 0.85rem;
+  color: var(--color-comment);
+  opacity: 0.5;
+}
+
+/* Mobile/Tablet responsive */
+@media (max-width: 968px) {
+  .main-content.editor-layout {
+    margin-left: 40px;
+  }
+
+  .line-numbers {
+    width: 40px;
+  }
+
+  .line-number {
+    padding: 0 0.5rem;
+  }
+
+  .content-column {
+    padding: 0 var(--spacing-sm);
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content.editor-layout {
+    margin-left: 0;
+    margin-top: 80px;
+  }
+
+  .line-numbers {
+    display: none;
+  }
+
+  .section-container {
+    padding: var(--spacing-md) 0;
+  }
+
+  .status-bar {
+    font-size: 0.65rem;
+  }
+
+  .status-left,
+  .status-right {
+    gap: 0.75rem;
+  }
+
+  section::before,
+  section::after {
+    display: none;
+  }
+}

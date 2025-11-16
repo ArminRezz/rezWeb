@@ -1,0 +1,83 @@
+/**
+ * Parallax Background Styles
+ * 
+ * Creates depth through layered backgrounds that move at different speeds.
+ */
+
+.parallax-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Individual parallax layers */
+.parallax-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  /* Extra height to prevent gaps during scrolling */
+}
+
+/* Layer backgrounds - customize these with your own images or gradients */
+.layer-1 {
+  background: radial-gradient(circle at 30% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+  opacity: 0.6;
+}
+
+.layer-2 {
+  background: radial-gradient(circle at 70% 40%, rgba(129, 140, 248, 0.15) 0%, transparent 50%);
+  opacity: 0.5;
+}
+
+.layer-3 {
+  background: radial-gradient(circle at 50% 60%, rgba(79, 70, 229, 0.1) 0%, transparent 50%);
+  opacity: 0.4;
+}
+
+.layer-4 {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, transparent 50%);
+}
+
+.layer-5 {
+  background: radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.2) 0%, transparent 60%);
+  opacity: 0.3;
+}
+
+/* Gradient overlay for better text readability */
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.7) 0%,
+    rgba(10, 10, 10, 0.5) 50%,
+    rgba(10, 10, 10, 0.7) 100%
+  );
+  pointer-events: none;
+}
+
+/* Add subtle grid pattern */
+.parallax-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(99, 102, 241, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+

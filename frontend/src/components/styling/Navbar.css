@@ -4,30 +4,157 @@
 	top: 0;
 	left: 0;
 	width: 100%;
-	background-color: #ffffff;
+	background: rgba(255, 255, 255, 0.08);
+	backdrop-filter: blur(20px) saturate(180%);
+	-webkit-backdrop-filter: blur(20px) saturate(180%);
+	border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 	z-index: 1000;
+	transition: all 0.3s ease;
+}
+
+.navbar:hover {
+	background: rgba(255, 255, 255, 0.12);
+	border-bottom-color: rgba(139, 92, 246, 0.4);
 }
 
 ul {
 	list-style-type: none;
 	margin: 0;
-	padding: 0;
+	padding: 0.8rem 0;
 	display: flex;
 	justify-content: center;
+	align-items: center;
 }
 
 li {
-	margin-right: 2rem;
+	margin: 0 1rem;
+	padding: 0.5rem 1.2rem;
 	cursor: pointer;
-	font-family: "Space Grotesk", sans-serif;
-	font-family: "Space Mono", monospace;
-	font-style: italic;
-    font-size: large;
-	color: rgb(0, 0, 0);
+	font-family: "Inter", "Space Grotesk", sans-serif;
+	font-style: normal;
+	font-size: 1rem;
+	font-weight: 500;
+	color: rgba(255, 255, 255, 0.9);
+	border-radius: 8px;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	position: relative;
+	overflow: hidden;
+}
+
+li::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(167, 139, 250, 0.2));
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 0.3s ease;
+	z-index: -1;
+	border-radius: 8px;
+}
+
+li:hover::before {
+	transform: scaleX(1);
 }
 
 li:hover {
-	background-color: rgb(5,12,1); /* Change the color on hover */
+	background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(167, 139, 250, 0.2));
 	color: white;
-	transition: 1s;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+li:active {
+	transform: translateY(0px);
+}
+
+li img {
+	transition: all 0.3s ease;
+	filter: brightness(0) invert(1);
+}
+
+li:hover img {
+	transform: scale(1.15) rotate(5deg);
+	filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(139, 92, 246, 0.6));
+}
+
+/* Scroll progress indicator */
+.navbar::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 3px;
+	width: 0%;
+	background: linear-gradient(90deg, 
+		rgba(139, 92, 246, 0.8), 
+		rgba(167, 139, 250, 0.8),
+		rgba(139, 92, 246, 0.8));
+	background-size: 200% 100%;
+	animation: gradient-flow 3s ease infinite;
+	transition: width 0.1s ease-out;
+	box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+	z-index: 1001;
+}
+
+@keyframes gradient-flow {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+/* Add subtle entrance animation to navbar */
+.navbar {
+	animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+	from {
+		transform: translateY(-100%);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+/* Improve link transitions */
+li a {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Add pulse effect to separators */
+li:first-child,
+li:last-child {
+	color: rgba(139, 92, 246, 0.6);
+	animation: pulse-separator 2s ease-in-out infinite;
+}
+
+@keyframes pulse-separator {
+	0%, 100% {
+		opacity: 0.6;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+li:first-child:hover,
+li:last-child:hover {
+	background: none;
+	transform: none;
+	cursor: default;
 }

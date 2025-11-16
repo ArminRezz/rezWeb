@@ -1,0 +1,117 @@
+/**
+ * About Section Styles - TERMINAL EDITION
+ * 
+ * JSON/code display format
+ */
+
+.about.terminal-section {
+  background: transparent;
+  padding: var(--spacing-lg) 0;
+}
+
+.about-content {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+/* Code block container */
+.code-block {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: var(--spacing-md);
+  overflow-x: auto;
+}
+
+/* JSON display */
+.json-display {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin: 0;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* Syntax highlighting colors */
+.json-display {
+  color: var(--color-text-secondary);
+}
+
+/* Terminal output section */
+.terminal-output-section {
+  margin-top: var(--spacing-lg);
+}
+
+.output-line {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.95rem;
+}
+
+.output-line .prompt {
+  color: var(--color-accent);
+  font-weight: bold;
+}
+
+.output-line .command {
+  color: var(--color-text-secondary);
+}
+
+/* Skills grid */
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: var(--spacing-sm);
+}
+
+.skill-tag {
+  background: rgba(0, 255, 65, 0.1);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  transition: var(--transition);
+  cursor: default;
+}
+
+.skill-tag:hover {
+  background: rgba(0, 255, 65, 0.2);
+  box-shadow: var(--glow);
+  transform: translateY(-2px);
+}
+
+/* Scrollbar for code block */
+.code-block::-webkit-scrollbar {
+  height: 8px;
+}
+
+.code-block::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.code-block::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .json-display {
+    font-size: 0.75rem;
+  }
+
+  .skills-grid {
+    gap: 0.5rem;
+  }
+
+  .skill-tag {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.75rem;
+  }
+}

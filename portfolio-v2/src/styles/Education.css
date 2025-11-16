@@ -1,0 +1,140 @@
+/**
+ * Education Section Styles - CHANGELOG EDITION
+ * 
+ * Version release changelog format
+ */
+
+.education.terminal-section {
+  background: transparent;
+  min-height: auto;
+}
+
+/* Changelog container */
+.changelog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+
+/* Version block */
+.version-block {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: var(--spacing-md);
+  transition: var(--transition);
+}
+
+.version-block:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 20px rgba(0, 255, 65, 0.15);
+}
+
+.version-block.current {
+  border-color: var(--color-primary);
+  background: rgba(0, 255, 65, 0.05);
+}
+
+/* Version header */
+.version-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.version-tag {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-warning);
+  font-family: var(--font-family);
+}
+
+.version-date {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.status-badge {
+  background: var(--color-primary);
+  color: var(--color-bg);
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.7);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 0 8px rgba(0, 255, 65, 0);
+  }
+}
+
+/* Version content */
+.version-content {
+  padding-left: var(--spacing-sm);
+}
+
+.version-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 0.25rem;
+}
+
+.version-subtitle {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Changes list */
+.changes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: var(--spacing-sm);
+}
+
+.change-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.change-icon {
+  color: var(--color-primary);
+  font-weight: bold;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.change-text {
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .version-tag {
+    font-size: 1rem;
+  }
+
+  .version-title {
+    font-size: 1.1rem;
+  }
+
+  .change-item {
+    font-size: 0.85rem;
+  }
+}

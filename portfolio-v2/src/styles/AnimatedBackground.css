@@ -1,0 +1,100 @@
+/**
+ * Animated Background Styles
+ * 
+ * Creates floating gradient blobs that move around the screen.
+ */
+
+.animated-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Individual animated blobs */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+  animation: float 20s infinite ease-in-out;
+}
+
+/* Different sizes and colors for each blob */
+.blob-1 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.4), transparent);
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 25s;
+}
+
+.blob-2 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.3), transparent);
+  top: 60%;
+  right: 10%;
+  animation-delay: -5s;
+  animation-duration: 30s;
+}
+
+.blob-3 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.3), transparent);
+  bottom: 20%;
+  left: 20%;
+  animation-delay: -10s;
+  animation-duration: 35s;
+}
+
+.blob-4 {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.25), transparent);
+  top: 40%;
+  right: 30%;
+  animation-delay: -15s;
+  animation-duration: 28s;
+}
+
+.blob-5 {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.35), transparent);
+  bottom: 10%;
+  right: 20%;
+  animation-delay: -20s;
+  animation-duration: 32s;
+}
+
+/* Float animation - creates organic movement */
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(50px, -80px) scale(1.1);
+  }
+  50% {
+    transform: translate(-30px, -50px) scale(0.9);
+  }
+  75% {
+    transform: translate(40px, 30px) scale(1.05);
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .blob {
+    animation: none;
+  }
+}
+

@@ -1,4 +1,57 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&family=Space+Mono:ital,wght@0,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Space+Mono:ital,wght@0,400;1,700&family=Inter:wght@300;400;600;700&display=swap');
+
+:root {
+  --primary-purple: rgba(139, 92, 246, 1);
+  --primary-purple-light: rgba(167, 139, 250, 1);
+  --primary-purple-dark: rgba(109, 40, 217, 1);
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(139, 92, 246, 0.3);
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --glow-color: rgba(139, 92, 246, 0.4);
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+::selection {
+  background: var(--primary-purple);
+  color: white;
+}
+
+/* Performance optimization for parallax layers */
+.animation_layer.parallax {
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Improve text rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Add focus states for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--primary-purple);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
 
 .pname-container {
   display: block;
@@ -7,17 +60,81 @@
 .name-container {
   display: inline-block;
   margin-top: 18rem;
+  animation: fadeInUp 1.5s ease-out, float 6s ease-in-out infinite 1.5s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 .name-container h1{
   font-weight: bolder;
-  font-size: 5.6rem;
+  font-size: 6.5rem;
   font-family: 'Space Grotesk', sans-serif;
-  font-family: 'Space Mono', monospace;
-  font-style: italic;
-  opacity: 90%;
+  font-style: normal;
+  opacity: 95%;
   width: 100%;
   color: rgb(255, 255, 255);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6),
+               0 0 40px rgba(77, 18, 255, 0.4),
+               0 0 60px rgba(139, 92, 246, 0.2);
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, #ffffff 0%, #a78bfa 50%, #ffffff 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+
+.name-container h1::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.6), transparent);
+  border-radius: 2px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translateX(-50%) scaleX(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scaleX(1);
+  }
 }
 
 #gitLogo {
@@ -40,133 +157,494 @@
 	background-position: top center;
 	background-size: auto 103%;
 	width: 100%;
+	background-repeat: no-repeat;
 }
 
 .animation_layer.parallax {
 	position: fixed;
+	will-change: transform;
 }
 
 #artback {
   background-image: url(./images/background.png);
-  filter: hue-rotate(150deg);
+  filter: hue-rotate(150deg) brightness(0.9);
+  transition: filter 0.3s ease;
 }
 
 #mountain {
   background-image: url(./images/mountains.png);
-  filter: hue-rotate(190deg);
+  filter: hue-rotate(190deg) brightness(1.05) contrast(1.1);
+  transition: filter 0.3s ease;
 }
 
 #jungle1 {
   background-image: url(./images/jungle1.png);
-  filter: grayscale(100%);
-  filter: hue-rotate(240deg);
+  filter: hue-rotate(240deg) brightness(0.95);
+  transition: filter 0.3s ease;
 }
 
 #jungle2 {
   background-image: url(./images/jungle2.png);
-  filter: grayscale(100%);
-  filter: hue-rotate(250deg);
+  filter: hue-rotate(250deg) brightness(0.98);
+  transition: filter 0.3s ease;
 }
 
 #jungle3 {
   background-image: url(./images/jungle3.png);
-  filter: grayscale(100%);
-  filter: hue-rotate(800deg);
+  filter: hue-rotate(260deg) brightness(1.0);
+  transition: filter 0.3s ease;
 }
 
 #jungle4 {
   background-image: url(./images/jungle4.png);
-  filter: grayscale(100%);
-  filter: hue-rotate(820deg);
+  filter: hue-rotate(100deg) brightness(1.05);
+  transition: filter 0.3s ease;
 }
 
 #jungle5 {
   background-image: url(./images/jungle5.png);
-  filter: grayscale(100%);
-  filter: hue-rotate(820deg);
+  filter: hue-rotate(100deg) brightness(1.1);
+  transition: filter 0.3s ease;
 }
 
 #manonmountain {
   background-image: url(./images/man_on_mountain.png);
-  filter: grayscale(100%);
-  filter: hue-rotate(830deg);
+  filter: hue-rotate(110deg) brightness(1.15) contrast(1.05);
+  transition: filter 0.3s ease;
 }
 
 .page1-container {
   height: 100%;
-  background-color: rgb(3, 11, 0);
-  border: 1px solid rgb(3,12,0);
+  background: linear-gradient(180deg, rgba(3, 11, 0, 0.92) 0%, rgba(10, 20, 15, 0.95) 50%, rgba(3, 11, 0, 0.92) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(77, 18, 255, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
 .page2-container {
   height: 100%;
-  background-color: rgb(3, 12, 0);
-  border: 1px solid rgb(3,12,0);
+  background: linear-gradient(180deg, rgba(3, 12, 0, 0.92) 0%, rgba(15, 10, 25, 0.95) 50%, rgba(3, 12, 0, 0.92) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(77, 18, 255, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
 .page3-container {
   height: 100%;
-  background-color: rgb(3, 11, 0);
-  border: 1px solid rgb(3,12,0);
+  background: linear-gradient(180deg, rgba(3, 11, 0, 0.92) 0%, rgba(10, 15, 20, 0.95) 50%, rgba(3, 11, 0, 0.92) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(77, 18, 255, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
 .page4-container {
   height: 100%;
-  background-color: rgb(3, 11, 0);
-  border: 1px solid rgb(3,12,0);
+  background: linear-gradient(180deg, rgba(3, 11, 0, 0.92) 0%, rgba(20, 10, 15, 0.95) 50%, rgba(3, 11, 0, 0.92) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(77, 18, 255, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
 .Experience {
-  font-family: 'Space Grotesk', sans-serif;
-  font-family: 'Space Mono', monospace;
-  font-style: italic;
+  font-family: 'Inter', 'Space Grotesk', sans-serif;
+  font-style: normal;
   color: white;
   text-align: center;
   padding-top: 3%;
+  animation: fadeIn 1s ease-in;
+  position: relative;
+}
+
+.Experience h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 50%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
+  margin-bottom: 2rem;
+  position: relative;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .Me {
-  font-family: 'Space Grotesk', sans-serif;
-  font-family: 'Space Mono', monospace;
-  font-style: italic;
+  font-family: 'Inter', 'Space Grotesk', sans-serif;
+  font-style: normal;
   color: white;
-  justify-content: flex;
   justify-content: space-around;
-  width: 80%;
+  width: 85%;
   height: 90%;
-  margin-left: 10%; 
+  margin-left: 7.5%; 
+  animation: slideInUp 0.8s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.Me h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 50%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .Me p{
-  font-family: 'Space Grotesk', sans-serif;
-  font-family: 'Space Mono', monospace;
-  font-style: italic;
-  color: white;
-  justify-content: flex;
-  justify-content: space-around;
-  border: 2px solid rgb(255, 255, 255);
-  width: 70%;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(139, 92, 246, 0.3);
+  border-radius: 20px;
+  width: 75%;
   margin-top: 3%;
-  margin-left: 15%; 
-  padding-top: 2%;
-  padding-bottom: 2%; 
-  padding-left: 1rem;
-  padding-right: 1rem;
+  margin-left: 12.5%; 
+  padding: 2.5rem;
   text-align: center;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.15);
+  transition: all 0.3s ease;
+}
+
+.Me p:hover {
+  border-color: rgba(139, 92, 246, 0.6);
+  box-shadow: 0 12px 48px rgba(139, 92, 246, 0.25);
+  transform: translateY(-5px);
 }
 
 .slide {
   margin-top: 2%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.slide img {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4),
+              0 5px 15px rgba(0, 0, 0, 0.2);
+  filter: brightness(0.95) saturate(1.1);
+  position: relative;
+  cursor: pointer;
+}
+
+.slide img:nth-child(1) {
+  animation: slideInLeft 0.8s ease-out 0.2s both;
+}
+
+.slide img:nth-child(2) {
+  animation: slideInLeft 0.8s ease-out 0.4s both;
+}
+
+.slide img:nth-child(3) {
+  animation: slideInLeft 0.8s ease-out 0.6s both;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide img:hover {
+  transform: translateY(-15px) scale(1.08) rotate(2deg);
+  box-shadow: 0 25px 50px rgba(139, 92, 246, 0.5),
+              0 10px 25px rgba(139, 92, 246, 0.3),
+              0 0 0 3px rgba(139, 92, 246, 0.2);
+  filter: brightness(1.1) saturate(1.2);
+  z-index: 10;
 }
 
 .card-row {
   margin-top: 5rem;
   display: flex;
-  justify-content: space-around; /* Adjust to space evenly or use 'space-between' */
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 0 2rem;
+}
+
+.card-row > * {
+  animation: fadeInUp 0.8s ease-out both;
+}
+
+.card-row > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.card-row > *:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.card-row > *:nth-child(3) {
+  animation-delay: 0.5s;
 }
 
 .card-row-1 {
   margin-top: 10%;
   display: flex;
-  justify-content: space-around; /* Adjust to space evenly or use 'space-between' */
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 0 2rem;
+}
+
+.card-row-1 > * {
+  animation: fadeInUp 0.8s ease-out both;
+}
+
+.card-row-1 > *:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.card-row-1 > *:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.card-row-1 > *:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+/* ===== Responsive Design ===== */
+@media screen and (max-width: 1400px) {
+  .name-container h1 {
+    font-size: 5.5rem;
+  }
+  
+  .card, .card.wootton, .card.MC, .card-row2, .card-dg {
+    width: 30%;
+    min-width: 260px;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .name-container {
+    margin-top: 15rem;
+  }
+  
+  .name-container h1 {
+    font-size: 4.5rem;
+  }
+  
+  .Me {
+    width: 90%;
+    margin-left: 5%;
+  }
+  
+  .Me p {
+    width: 85%;
+    margin-left: 7.5%;
+    font-size: 1rem;
+  }
+  
+  .slide img {
+    width: 40% !important;
+    margin: 0.5rem !important;
+  }
+  
+  .card, .card.wootton, .card.MC, .card-row2, .card-dg {
+    width: 45%;
+    min-width: 250px;
+  }
+  
+  .Experience h1 {
+    font-size: 3rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .name-container {
+    margin-top: 12rem;
+  }
+  
+  .name-container h1 {
+    font-size: 3.5rem;
+  }
+  
+  .navbar ul {
+    flex-wrap: wrap;
+    padding: 0.5rem 0;
+  }
+  
+  .navbar li {
+    margin: 0.3rem 0.5rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .Me {
+    width: 95%;
+    margin-left: 2.5%;
+  }
+  
+  .Me h1 {
+    font-size: 2.5rem;
+  }
+  
+  .Me p {
+    width: 90%;
+    margin-left: 5%;
+    font-size: 0.95rem;
+    padding: 1.5rem;
+  }
+  
+  .slide {
+    flex-direction: column;
+  }
+  
+  .slide img {
+    width: 70% !important;
+    margin: 1rem auto !important;
+  }
+  
+  .card, .card.wootton, .card.MC, .card-row2, .card-dg {
+    width: 90%;
+    min-width: unset;
+    margin: 1rem auto;
+  }
+  
+  .card-row, .card-row-1 {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .Experience h1 {
+    font-size: 2.5rem;
+  }
+  
+  .contact-form {
+    padding: 2rem;
+    margin: 0 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .name-container {
+    margin-top: 10rem;
+  }
+  
+  .name-container h1 {
+    font-size: 2.5rem;
+  }
+  
+  .Me h1 {
+    font-size: 2rem;
+  }
+  
+  .Me p {
+    font-size: 0.9rem;
+    padding: 1rem;
+  }
+  
+  .Experience h1 {
+    font-size: 2rem;
+  }
+  
+  .slide img {
+    width: 85% !important;
+  }
+}
+
+/* ===== Additional Visual Polish ===== */
+
+/* Shimmer effect for section titles */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.Experience h1::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent);
+  animation: shimmer 3s infinite;
+}
+
+/* Subtle grid pattern overlay */
+.page1-container::before,
+.page2-container::before,
+.page3-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(139, 92, 246, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 92, 246, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Scroll indicator */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Add depth to parallax layers */
+#artback::after,
+#mountain::after,
+#jungle1::after,
+#jungle2::after,
+#jungle3::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
+  pointer-events: none;
 }

@@ -1,0 +1,296 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* Theme Variables */
+.terminal-container {
+  --primary-color: #00ff41;
+  --secondary-color: #00cc33;
+  --prompt-color: #ff0066;
+  --bg-color: #0d0208;
+  --glow-color: rgba(0, 255, 65, 0.3);
+}
+
+.terminal-container.theme-blue {
+  --primary-color: #00d9ff;
+  --secondary-color: #00a8cc;
+  --prompt-color: #ff6b9d;
+  --bg-color: #0a0e27;
+  --glow-color: rgba(0, 217, 255, 0.3);
+}
+
+.terminal-container.theme-amber {
+  --primary-color: #ffb000;
+  --secondary-color: #ff8c00;
+  --prompt-color: #ff4757;
+  --bg-color: #1a0f00;
+  --glow-color: rgba(255, 176, 0, 0.3);
+}
+
+.terminal-container.theme-matrix {
+  --primary-color: #0f0;
+  --secondary-color: #0d0;
+  --prompt-color: #f00;
+  --bg-color: #000;
+  --glow-color: rgba(0, 255, 0, 0.4);
+}
+
+/* Fullscreen Terminal */
+.terminal-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  color: var(--primary-color);
+  overflow: hidden;
+}
+
+/* Terminal Body - Fullscreen */
+.terminal-body {
+  flex: 1;
+  padding: 2rem;
+  padding-top: 3rem;
+  overflow-y: auto;
+  background: var(--bg-color);
+  line-height: 1.6;
+  position: relative;
+}
+
+/* Custom scrollbar */
+.terminal-body::-webkit-scrollbar {
+  width: 10px;
+}
+
+.terminal-body::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+
+.terminal-body::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 5px;
+}
+
+.terminal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
+}
+
+/* Terminal Lines */
+.terminal-line {
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 10;
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.input-line {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.prompt {
+  color: var(--prompt-color);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.command {
+  color: var(--primary-color);
+}
+
+.output-line {
+  color: var(--secondary-color);
+  font-family: inherit;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin-left: 0;
+  font-size: 0.95rem;
+}
+
+/* Terminal Input */
+.terminal-input-form {
+  margin-top: 0.5rem;
+}
+
+.terminal-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--primary-color);
+  font-family: inherit;
+  font-size: 1rem;
+  caret-color: var(--primary-color);
+  width: 100%;
+}
+
+.terminal-input::selection {
+  background: var(--glow-color);
+}
+
+/* Special output styles */
+.output-line a {
+  color: #ffcc00;
+  text-decoration: underline;
+}
+
+.output-line a:hover {
+  color: #ffdd33;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .terminal-body {
+    padding: 1rem;
+    padding-top: 2rem;
+    font-size: 0.85rem;
+  }
+
+  .terminal-input {
+    font-size: 0.9rem;
+  }
+
+  .prompt {
+    font-size: 0.85rem;
+  }
+}
+
+/* Subtle scanline effect (optional) */
+.terminal-body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.05),
+    rgba(0, 0, 0, 0.05) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 5;
+  animation: scanline 8s linear infinite;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(10px);
+  }
+}
+
+/* Text glow */
+.terminal-line,
+.terminal-input {
+  text-shadow: 0 0 5px var(--glow-color);
+}
+
+/* Music player indicator */
+.music-indicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--primary-color);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--primary-color);
+  font-size: 0.9rem;
+  z-index: 1000;
+  animation: slideInRight 0.3s ease-out, pulse 2s ease-in-out infinite;
+  box-shadow: 0 4px 12px var(--glow-color);
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Game overlay */
+.game-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.game-container {
+  background: var(--bg-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 90%;
+  color: var(--primary-color);
+  text-align: center;
+  box-shadow: 0 0 40px var(--glow-color);
+}
+
+.game-container h2 {
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+.game-container p {
+  margin: 0.5rem 0;
+  color: var(--secondary-color);
+}
+
+.game-container button {
+  margin-top: 1.5rem;
+  padding: 0.75rem 2rem;
+  background: var(--primary-color);
+  color: var(--bg-color);
+  border: none;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.game-container button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px var(--glow-color);
+}
+

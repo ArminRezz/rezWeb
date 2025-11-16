@@ -1,0 +1,202 @@
+/**
+ * FileTree Component Styles
+ * 
+ * Vim/VSCode-style file explorer sidebar
+ */
+
+.file-tree {
+  position: fixed;
+  left: 0;
+  top: 60px;
+  bottom: 0;
+  width: 250px;
+  background: rgba(13, 2, 8, 0.98);
+  border-right: 2px solid var(--color-primary);
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+  box-shadow: 4px 0 20px rgba(0, 255, 65, 0.1);
+}
+
+.file-tree.collapsed {
+  transform: translateX(-210px);
+}
+
+/* Header */
+.file-tree-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(0, 255, 65, 0.05);
+}
+
+.tree-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  letter-spacing: 1px;
+}
+
+.tree-toggle {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: var(--transition);
+}
+
+.tree-toggle:hover {
+  color: var(--color-primary-light);
+  transform: scale(1.2);
+}
+
+/* Content */
+.file-tree-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar styling */
+.file-tree-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.file-tree-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.file-tree-content::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 3px;
+}
+
+/* Directory */
+.directory {
+  flex: 1;
+}
+
+.directory-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.directory-icon {
+  color: var(--color-warning);
+  font-size: 0.7rem;
+}
+
+.directory-name {
+  color: var(--color-primary);
+}
+
+/* File list */
+.file-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 2rem;
+  background: none;
+  border: none;
+  border-left: 2px solid transparent;
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+  position: relative;
+}
+
+.file-item:hover {
+  background: rgba(0, 255, 65, 0.1);
+  color: var(--color-primary);
+  border-left-color: var(--color-primary);
+}
+
+.file-item.active {
+  background: rgba(0, 255, 65, 0.15);
+  color: var(--color-primary);
+  border-left-color: var(--color-primary);
+  font-weight: 600;
+}
+
+.file-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.file-name {
+  flex: 1;
+  font-family: var(--font-family);
+}
+
+.file-indicator {
+  color: var(--color-primary);
+  font-size: 0.6rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Footer */
+.tree-footer {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--color-border);
+  background: rgba(0, 0, 0, 0.3);
+  font-size: 0.7rem;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.status-label {
+  color: var(--color-comment);
+}
+
+.status-value {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .file-tree {
+    width: 200px;
+    top: 80px;
+  }
+
+  .file-tree.collapsed {
+    transform: translateX(-160px);
+  }
+
+  .file-item {
+    padding: 0.4rem 0.75rem 0.4rem 1.5rem;
+    font-size: 0.75rem;
+  }
+}
+

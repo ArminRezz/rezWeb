@@ -1,0 +1,235 @@
+/**
+ * Global Styles
+ * 
+ * Base styles and CSS variables used throughout the app.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap');
+
+/* CSS Custom Properties (Variables) - TERMINAL THEME */
+:root {
+  /* Colors - Matrix/Terminal inspired */
+  --color-primary: #00ff41;
+  --color-primary-light: #33ff66;
+  --color-primary-dark: #00cc33;
+  --color-accent: #ff0066;
+  --color-warning: #ffcc00;
+  --color-bg: #0d0208;
+  --color-surface: #1a0f14;
+  --color-text: #00ff41;
+  --color-text-secondary: #00cc33;
+  --color-text-muted: #008f11;
+  --color-border: rgba(0, 255, 65, 0.2);
+  --color-comment: #7f7f7f;
+
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 4rem;
+  --spacing-xl: 6rem;
+
+  /* Typography - Monospace only */
+  --font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  --font-size-base: 16px;
+  
+  /* Effects */
+  --transition: all 0.2s ease;
+  --shadow: 0 4px 6px rgba(0, 255, 65, 0.1);
+  --shadow-lg: 0 10px 30px rgba(0, 255, 65, 0.2);
+  --glow: 0 0 10px rgba(0, 255, 65, 0.5);
+  --glow-strong: 0 0 20px rgba(0, 255, 65, 0.8);
+}
+
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: var(--font-size-base);
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  text-shadow: 0 0 2px rgba(0, 255, 65, 0.5);
+  position: relative;
+}
+
+/* CRT screen effect */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 10000;
+  animation: scanline 8s linear infinite;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(10px);
+  }
+}
+
+/* Screen flicker effect */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.98; }
+}
+
+body {
+  animation: flicker 0.15s infinite;
+}
+
+/* Selection color */
+::selection {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* Remove default button styles */
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Section styles */
+section {
+  min-height: 100vh;
+  padding: var(--spacing-lg) var(--spacing-md);
+  position: relative;
+}
+
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-lg);
+  color: var(--color-primary);
+}
+
+/* Terminal section styles */
+.terminal-section {
+  padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.terminal-section .section-title .comment {
+  color: var(--color-text-muted);
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.terminal-section .section-title .comment::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Terminal output section */
+.terminal-output-section {
+  margin: var(--spacing-md) 0;
+}
+
+.output-line {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.output-line .prompt {
+  color: var(--color-accent);
+  font-weight: bold;
+}
+
+.output-line .command {
+  color: var(--color-text-secondary);
+}
+
+/* Comment styles */
+.comment {
+  color: var(--color-text-muted);
+  font-style: normal;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-light);
+}
+

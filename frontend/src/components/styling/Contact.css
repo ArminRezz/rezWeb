@@ -1,68 +1,117 @@
 .contact-form {
-    max-width: 500px;
+    max-width: 600px;
     margin: 0 auto;
-    padding: 30px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow for depth */
+    padding: 3rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(30px);
+    border: 2px solid rgba(139, 92, 246, 0.3);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(139, 92, 246, 0.2);
+    transition: all 0.3s ease;
+}
+
+.contact-form:hover {
+    border-color: rgba(139, 92, 246, 0.5);
+    box-shadow: 0 25px 70px rgba(139, 92, 246, 0.2),
+                0 0 0 1px rgba(139, 92, 246, 0.3);
+    transform: translateY(-5px);
 }
 
 .contact-form label {
     display: block;
-    margin-bottom: 10px;
-    font-size: 18px;
-    color: #ffffff;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    font-family: 'Inter', 'Space Grotesk', sans-serif;
+    letter-spacing: 0.02em;
 }
 
 .contact-form input[type="text"],
 .contact-form input[type="email"],
 .contact-form textarea {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    padding: 15px 18px;
+    margin-bottom: 25px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(139, 92, 246, 0.2);
+    border-radius: 12px;
     box-sizing: border-box;
-    font-size: 16px;
-    color: #393939;
-    transition: border-color 0.3s ease; /* Add transition effect for border color */
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.95);
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+}
+
+.contact-form input[type="text"]::placeholder,
+.contact-form input[type="email"]::placeholder,
+.contact-form textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .contact-form textarea {
-    height: 150px;
+    height: 160px;
+    resize: vertical;
+    min-height: 120px;
 }
 
 .contact-form input[type="submit"] {
     width: 100%;
-    padding: 12px;
-    background-color: rgb(71, 23, 245);
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(167, 139, 250, 0.8) 100%);
     color: #fff;
-	font-family: 'Space Grotesk', sans-serif;
-	font-family: 'Space Mono', monospace;
-	font-style: italic;
-    border: none;
-    border-radius: 8px;
+	font-family: 'Inter', 'Space Grotesk', sans-serif;
+	font-style: normal;
+	font-weight: 600;
+    border: 2px solid rgba(139, 92, 246, 0.5);
+    border-radius: 12px;
     cursor: pointer;
-    font-size: 18px;
-    transition: background-color 0.3s ease; /* Add transition effect for background color */
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
 }
 
 .contact-form input[type="submit"]:hover {
-    background-color: #0056b3;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(167, 139, 250, 0.9) 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5);
+    border-color: rgba(139, 92, 246, 0.8);
+}
+
+.contact-form input[type="submit"]:active {
+    transform: translateY(-1px);
+}
+
+.contact-form input[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .contact-form p {
-    margin-top: 15px;
-    font-style: italic;
-    color: #007bff;
-    font-size: 16px;
+    margin-top: 20px;
+    font-style: normal;
+    color: rgba(167, 139, 250, 1);
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 12px;
+    background: rgba(167, 139, 250, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(167, 139, 250, 0.3);
 }
 
 /* Add border styling for input focus */
 .contact-form input[type="text"]:focus,
 .contact-form input[type="email"]:focus,
 .contact-form textarea:focus {
-    border-color: #007bff;
+    border-color: rgba(139, 92, 246, 0.8);
     outline: none;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a subtle shadow on focus */
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15),
+                0 8px 24px rgba(139, 92, 246, 0.2);
+    transform: translateY(-2px);
 }
