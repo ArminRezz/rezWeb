@@ -17,8 +17,15 @@ if [ -f "/etc/secrets/portfolio.json" ]; then
     echo "✓ Copied portfolio.json from Secret Files"
     
     # Validate JSON
-    if python3 -m json.tool ./portfolio.json > /dev/null 2>&1; then
+    echo "Validating portfolio.json..."
+    if python3 -c "import json; json.load(open('./portfolio.json'))" 2>&1; then
         echo "✓ portfolio.json is valid JSON"
+        FILE_SIZE=$(wc -c < ./portfolio.json)
+        echo "✓ File size: $FILE_SIZE bytes"
+        if [ "$FILE_SIZE" -lt 100 ]; then
+            echo "WARNING: File seems too small, falling back to generation..."
+            python3 generate_fs.py || python generate_fs.py
+        fi
     else
         echo "ERROR: portfolio.json from Secret Files is invalid JSON!"
         echo "Falling back to generation from portfolio-source/..."
@@ -58,5 +65,22 @@ fi
 echo "=========================================="
 echo "Build complete! Final contents:"
 ls -la *.json *.html *.js *.css 2>/dev/null || echo "Some files may not exist (this is OK)"
+echo ""
+echo "Verifying portfolio.json is ready to serve:"
+if [ -f "./portfolio.json" ]; then
+    echo "✓ portfolio.json exists and is readable"
+    echo "  Size: $(wc -c < portfolio.json) bytes"
+    echo "  Permissions: $(ls -l portfolio.json | awk '{print $1}')"
+    # Test JSON one more time
+    if python3 -c "import json; data=json.load(open('./portfolio.json')); print('✓ JSON structure valid,', len(str(data)), 'characters')" 2>&1; then
+        echo "✓ Final validation passed"
+    else
+        echo "ERROR: Final validation failed!"
+        exit 1
+    fi
+else
+    echo "ERROR: portfolio.json missing!"
+    exit 1
+fi
 echo "=========================================="
 
