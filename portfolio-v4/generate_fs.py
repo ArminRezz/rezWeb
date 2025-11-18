@@ -57,7 +57,11 @@ def is_text_file(filepath):
     Returns:
         bool: True if file is text, False otherwise
     """
-    text_extensions = ['.txt', '.md', '.json', '.js', '.py', '.html', '.css', '.xml', '.yaml', '.yml']
+    text_extensions = [
+        '.txt', '.md', '.json', '.js', '.py', '.html', '.css', '.xml', '.yaml', '.yml',
+        '.typ', '.bib', '.tex', '.rs', '.go', '.java', '.c', '.cpp', '.h', '.hpp',
+        '.sh', '.bash', '.zsh', '.fish', '.toml', '.ini', '.conf', '.cfg'
+    ]
     
     # If file has a text extension, it's a text file
     if any(filepath.suffix == ext for ext in text_extensions):

@@ -1,0 +1,23 @@
+{
+  "term": {
+    "banner_name": "name1.html",
+    "banner_image": "bimage1.html",
+    "opacity": 100,
+    "theme": "earth",
+    "quote": "asimov"
+  },
+  "audiojunkie": {
+    "opacity": 100,
+    "theme": "earth",
+    "visualizer": "linear"
+  },
+  "dock": {
+    "opacity": 100,
+    "theme": "earth"
+  },
+  "os": {
+    "bg_img": "core",
+    "theme": "earth"
+  }
+}
+

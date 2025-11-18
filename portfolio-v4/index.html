@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Armin Rezaiyan - Terminal Portfolio</title>
+    <title>arminOS</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -45,8 +45,8 @@
 <span class="stars">  </span><span class="house">/ [][] \</span><span class="tree">###\#|#/###</span><span class="stars">   ..    </span><span class="stars twinkle">*</span><span class="stars">     .  </span><span class="telescope">//</span><span class="stars">  </span><span class="stars twinkle">*</span><span class="stars">  .  ..  </span><span class="stars twinkle">*</span>
 <span class="stars">  </span><span class="house">|  __  | </span><span class="tree">###\|/###</span><span class="stars">  </span><span class="stars twinkle">*</span><span class="stars">    </span><span class="stars twinkle">*</span><span class="stars">  </span><span class="person-head">___o </span><span class="telescope">|==//</span><span class="stars"> .      </span><span class="stars twinkle">*</span><span class="stars">   </span><span class="stars twinkle">*</span>
 <span class="stars">  </span><span class="house">|  |!  |  </span><span class="tree"># }|{  #</span><span class="stars">         </span><span class="telescope">/\  \/  //|\</span>
-<span class="stars">  </span><span class="house">|  ||  |</span><span class="stars">    </span><span class="tree">}|{</span><span class="stars">              </span><span class="telescope">/ /</span><span class="stars">        </span><span class="person">| \</span>
-<span class="stars">                              </span><span class="ground">` `        '  '</span>
+<span class="stars">  </span><span class="house">|  ||  |</span><span class="stars">    </span><span class="tree">}|{</span><span class="stars">              </span><span class="telescope">/ /</span><span class="stars">        </span><span class="telescope">| \</span>
+<span class="ground">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
                     </pre>
                     <p class="welcome-text">
                         Type <span class="highlight glow">help</span> to begin • <span class="highlight glow">ls</span> to browse • <span class="highlight glow">cat</span> to read
@@ -87,6 +87,34 @@
             </div>
         </div>
         
+        <!-- Audio Junkie Window -->
+        <div class="audio-window closed" id="audio-window">
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <span class="btn btn-close"></span>
+                    <span class="btn btn-minimize"></span>
+                </div>
+                <div class="terminal-title" id="audio-title">🎵 Audio Junkie</div>
+            </div>
+            <div class="audio-body">
+                <div class="audio-info">
+                    <div class="now-playing">Now Playing</div>
+                    <div class="song-name" id="song-name">No track loaded</div>
+                </div>
+                <canvas id="audio-visualizer"></canvas>
+                <div class="audio-controls">
+                    <button class="audio-btn" id="play-pause-btn">▶️</button>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="time-display">
+                        <span id="current-time">0:00</span> / <span id="total-time">0:00</span>
+                    </div>
+                </div>
+            </div>
+            <audio id="audio-player" style="display: none;"></audio>
+        </div>
+        
     </div>
     
     <!-- Dock / App Menu -->
@@ -104,6 +132,13 @@
                     <span class="icon">📄</span>
                 </div>
                 <span class="dock-label">Viewer</span>
+            </div>
+            
+            <div class="dock-item audio-app" id="audio-app" title="Audio Junkie" style="display: none;">
+                <div class="dock-icon">
+                    <span class="icon">🎵</span>
+                </div>
+                <span class="dock-label">Audio Junkie</span>
             </div>
             
             <div class="dock-separator"></div>

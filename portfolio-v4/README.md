@@ -11,22 +11,31 @@ A modular, dynamic terminal-based portfolio website that loads content from a JS
 
 ### 💻 Terminal Commands
 - **Navigation:** `ls`, `cd`, `pwd`, `tree`
-- **File Operations:** `cat` (supports text, images, audio, PDFs)
+- **File Operations:** 
+  - `cat <path/file>` - Display text files (supports paths)
+  - `open <path/file>` - Open PDFs, images, and audio files (supports paths)
 - **Utilities:** `help`, `clear`, `echo`, `history`, `whoami`, `date`
 - **Hidden Files:** Support for dotfiles (use `ls -a`)
-- **Tab Completion:** Auto-complete file and directory names
+- **Tab Completion:** ✅ Auto-complete file and directory names
 - **Command History:** Navigate with ↑/↓ arrows
+
+### 🎨 Interactive Features
+- 🎵 **Audio Junkie** - Built-in audio player with real-time visualizer
+- 📄 **Document Viewer** - PDF and image viewer with window controls
+- 🪟 **Draggable Windows** - Move windows around the screen
+- 🎯 **Window Controls** - Close, minimize, maximize buttons
+- 🎨 **Dock System** - macOS-style dock with app icons
 
 ### 🎨 User Experience
 - Authentic terminal look and feel
 - Responsive design for mobile and desktop
 - Smooth animations and transitions
-- Keyboard shortcuts (Ctrl+L to clear, Tab for completion)
+- Keyboard shortcuts (Tab for completion, ↑/↓ for history)
 - Custom scrollbar styling
+- Animated ASCII art banner
 
 ### 🚀 Coming Soon
-- `music` - Play audio files from the Media folder
-- `banner` - Animated ASCII art
+- `banner` - Animated ASCII art banners
 - `snake` - Classic Snake game in terminal
 
 ## 📁 Project Structure

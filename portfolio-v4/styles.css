@@ -22,6 +22,56 @@ body {
     justify-content: center;
     padding: 20px;
     overflow: hidden;
+    transition: background 0.5s ease;
+}
+
+/* Background image: Core (Jungle/earth theme - greens) */
+body.bg-core {
+    background: linear-gradient(135deg, 
+        #0d2818 0%, 
+        #1a4d2e 25%, 
+        #2d5a3d 50%, 
+        #1a4d2e 75%, 
+        #0d2818 100%);
+    background-size: 200% 200%;
+    animation: coreGradient 25s ease infinite;
+}
+
+@keyframes coreGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Background image: Sky (Water/sky colors - blues, purples, pinks) */
+body.bg-sky {
+    background: linear-gradient(135deg, 
+        #1e3a8a 0%, 
+        #3b82f6 20%, 
+        #60a5fa 40%, 
+        #93c5fd 60%, 
+        #a78bfa 80%, 
+        #c084fc 100%);
+    background-size: 400% 400%;
+    animation: skyGradient 15s ease infinite;
+}
+
+@keyframes skyGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 /* ===========================
@@ -51,6 +101,53 @@ body {
     backdrop-filter: blur(10px);
     border: 1px solid rgba(0, 255, 0, 0.2);
     transition: all 0.3s ease;
+}
+
+/* Earth theme (default) */
+.terminal-window.theme-earth {
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(0, 255, 0, 0.2);
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(0, 255, 0, 0.1);
+}
+
+/* Water theme */
+.terminal-window.theme-water {
+    background: linear-gradient(135deg, rgba(15, 30, 60, 0.95) 0%, rgba(25, 50, 90, 0.95) 50%, rgba(15, 25, 55, 0.95) 100%);
+    border: none;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(75, 0, 130, 0.2),
+        0 0 60px rgba(0, 212, 255, 0.1);
+    position: relative;
+}
+
+.terminal-window.theme-water::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 212, 255, 0.03) 2px,
+            rgba(0, 212, 255, 0.03) 4px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(138, 43, 226, 0.02) 2px,
+            rgba(138, 43, 226, 0.02) 4px
+        );
+    pointer-events: none;
+    border-radius: 10px;
+    z-index: 0;
 }
 
 /* Maximized state - fullscreen */
@@ -92,7 +189,15 @@ body {
     display: flex;
     align-items: center;
     gap: 15px;
+}
+
+/* Theme-specific header borders */
+.terminal-window.theme-earth .terminal-header {
     border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+.terminal-window.theme-water .terminal-header {
+    border-bottom: 1px solid rgba(75, 0, 130, 0.5);
 }
 
 .terminal-buttons {
@@ -154,6 +259,98 @@ body {
     line-height: 1.4;
 }
 
+/* Water theme terminal body */
+.terminal-window.theme-water .terminal-body {
+    background: linear-gradient(135deg, #0f1f3f 0%, #152a4f 25%, #0f1f3f 50%, #152a4f 75%, #0f1f3f 100%);
+    background-size: 400% 400%;
+    animation: waterGradient 15s ease infinite;
+    position: relative;
+}
+
+.terminal-window.theme-water .terminal-body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(0, 191, 255, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.terminal-window.theme-water .terminal-body > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Water theme text colors - white instead of green */
+.terminal-window.theme-water .terminal-body {
+    color: #ffffff;
+}
+
+.terminal-window.theme-water .prompt {
+    color: #ffffff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.terminal-window.theme-water .command-input {
+    color: #ffffff;
+    caret-color: #ffffff;
+}
+
+.terminal-window.theme-water .command-input::selection {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.terminal-window.theme-water .output-line {
+    color: #ffffff;
+}
+
+.terminal-window.theme-water .output-line.success {
+    color: #ffffff;
+}
+
+.terminal-window.theme-water .cmd {
+    color: #ffffff;
+}
+
+.terminal-window.theme-water .args {
+    color: #ffffff;
+}
+
+.terminal-window.theme-water .tree {
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+.terminal-window.theme-water .tree-output {
+    color: #ffffff;
+}
+
+.terminal-window.theme-water .ls-output .file {
+    color: #ffffff;
+}
+
+.terminal-window.theme-water .ls-output span:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes waterGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 /* Custom Scrollbar */
 .terminal-body::-webkit-scrollbar {
     width: 10px;
@@ -182,10 +379,12 @@ body {
 }
 
 .ascii-art {
-    font-size: 9px;
+    font-size: 11px;
     line-height: 1.05;
     margin-bottom: 12px;
     font-weight: bold;
+    white-space: pre;
+    font-family: 'Courier New', monospace;
 }
 
 /* Cyberpunk gradient text for ASCII art lines with electric glow */
@@ -251,6 +450,8 @@ body {
     margin-top: 12px;
     margin-bottom: 15px;
     font-weight: bold;
+    white-space: pre;
+    font-family: 'Courier New', monospace;
 }
 
 /* House (blue) */
@@ -327,9 +528,205 @@ body {
     animation-delay: 1s;
 }
 
-/* Ground (gray) */
+/* Wormhole container */
+.wormhole-container {
+    position: relative;
+}
+
+/* Wormhole ASCII art */
+.wormhole-art {
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.2;
+    margin: 10px 0;
+    white-space: pre;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.wormhole-art.json-drop-zone:hover {
+    background: rgba(0, 0, 0, 0.2);
+    text-shadow: 0 0 8px rgba(0, 255, 0, 0.7);
+}
+
+.wormhole-art.json-drop-zone.drag-over {
+    background: rgba(0, 255, 0, 0.1);
+    text-shadow: 0 0 12px rgba(0, 255, 0, 1);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+}
+
+.wormhole-message {
+    color: #00ff00;
+    font-style: italic;
+    text-align: center;
+    margin-top: 10px;
+    padding: 10px;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.wormhole-actions {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+
+.config-json {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    overflow-x: auto;
+    max-height: 400px;
+    overflow-y: auto;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    white-space: pre;
+    text-shadow: 0 0 3px rgba(0, 255, 0, 0.3);
+}
+
+/* Ground (brown) */
 .ground {
-    color: #666666;
+    color: #8B6F47;
+    text-shadow: 0 0 3px rgba(139, 111, 71, 0.4);
+    opacity: 0.4;
+}
+
+/* ============================================
+   THEME-SPECIFIC SIZING
+   ============================================
+   Sizing is controlled by data-theme attribute, NOT by class names in the HTML.
+   This allows you to create custom themes with any class names you want.
+   
+   To add custom sizing for a new theme:
+   .ascii-art[data-theme="yourtheme"] { font-size: 20px !important; }
+   .rocket-art[data-theme="yourimage"] { font-size: 20px !important; }
+   
+   Default sizes (no data-theme override):
+   - Banner name: 11px
+   - Banner image: 11px
+   ============================================ */
+
+/* name1.html - larger size (now has ARMIN OS content) */
+.ascii-art[data-theme="name1"] {
+    font-size: 16px !important;
+}
+
+.ascii-art[data-theme="name1"] span {
+    font-size: inherit;
+}
+
+/* name2.html - slightly smaller (now has ARMIN COOKING content) */
+.ascii-art[data-theme="name2"] {
+    font-size: 10px !important;
+}
+
+.ascii-art[data-theme="name2"] span {
+    font-size: inherit;
+}
+
+/* name3.html - larger size */
+.ascii-art[data-theme="name3"] {
+    font-size: 16px !important;
+}
+
+.ascii-art[data-theme="name3"] span {
+    font-size: inherit;
+}
+
+.banner2-line1 {
+    color: #00ffff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+}
+
+.banner2-line2 {
+    color: #00ddff;
+    text-shadow: 0 0 10px rgba(0, 221, 255, 0.6);
+}
+
+.banner2-line3 {
+    color: #00bbff;
+    text-shadow: 0 0 10px rgba(0, 187, 255, 0.6);
+}
+
+.banner2-line4 {
+    color: #0099ff;
+    text-shadow: 0 0 10px rgba(0, 153, 255, 0.6);
+}
+
+.banner2-line5 {
+    color: #7733ff;
+    text-shadow: 0 0 10px rgba(119, 51, 255, 0.6);
+}
+
+.banner2-line6 {
+    color: #dd00ff;
+    text-shadow: 0 0 10px rgba(221, 0, 255, 0.6);
+}
+
+/* bimage1.html - larger size */
+.rocket-art[data-theme="bimage1"] {
+    font-size: 14px !important;
+}
+
+.rocket-art[data-theme="bimage1"] span {
+    font-size: inherit;
+}
+
+/* bimage2.html - larger size */
+.rocket-art[data-theme="bimage2"] {
+    font-size: 16px !important;
+}
+
+.rocket-art[data-theme="bimage2"] span {
+    font-size: inherit;
+}
+
+/* bimage3.html - larger size */
+.rocket-art[data-theme="bimage3"] {
+    font-size: 16px !important;
+}
+
+.rocket-art[data-theme="bimage3"] span {
+    font-size: inherit;
+}
+
+.simple-art {
+    color: #00ff88;
+    text-shadow: 0 0 5px rgba(0, 255, 136, 0.4);
+}
+
+/* Theme 3 styling - demonstrates ANY class names work! */
+.neon-text {
+    color: #ff00ff;
+    text-shadow: 
+        0 0 5px #ff00ff,
+        0 0 10px #ff00ff,
+        0 0 20px #ff00ff,
+        0 0 40px #ff00ff;
+    animation: neon-flicker 2s infinite alternate;
+}
+
+@keyframes neon-flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+    }
+    20%, 24%, 55% {
+        opacity: 0.7;
+    }
+}
+
+.matrix-code {
+    color: #00ff00;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+    font-weight: bold;
 }
 
 .welcome-message p {
@@ -337,10 +734,55 @@ body {
 }
 
 .welcome-text {
-    font-size: 11px;
+    font-size: 13px;
     color: #88ff88;
     margin-top: 5px;
     opacity: 0.7;
+}
+
+.quote-display {
+    margin: 20px 0;
+    padding: 0;
+    padding-left: 20px;
+}
+
+.quote-text {
+    font-size: 14px;
+    color: #00ff00;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.terminal-window.theme-water .quote-text {
+    color: #87ceeb;
+    font-family: 'Georgia', 'Palatino', 'Times New Roman', serif;
+    font-style: italic;
+    letter-spacing: 0.5px;
+}
+
+.quote-author {
+    font-size: 12px;
+    color: #00ff00;
+    padding-left: 30px;
+    opacity: 0.8;
+}
+
+.terminal-window.theme-water .quote-author {
+    color: #87ceeb;
+    font-family: 'Georgia', 'Palatino', 'Times New Roman', serif;
+    font-style: italic;
+    letter-spacing: 0.5px;
+}
+
+.quote-author a {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.quote-author a:hover {
+    opacity: 1;
+    text-decoration: underline;
 }
 
 .banner-info {
@@ -462,6 +904,12 @@ body {
     font-weight: bold;
 }
 
+.fish-icon {
+    color: #00d4ff;
+    text-shadow: 0 0 5px rgba(0, 212, 255, 0.6);
+    font-weight: bold;
+}
+
 .command-input {
     flex: 1;
     background: transparent;
@@ -565,6 +1013,182 @@ body {
     height: calc(100% - 45px);
     background: #1a1a1a;
     overflow: auto;
+}
+
+/* ===========================
+   Audio Junkie Window
+   =========================== */
+
+.audio-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 400px;
+    background: rgba(10, 10, 10, 0.95);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    z-index: 1002;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+/* Theme-specific header borders for Audio Junkie window */
+.audio-window.theme-earth .terminal-header {
+    border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+.audio-window.theme-water .terminal-header {
+    border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.audio-window.closed {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.9);
+}
+
+.audio-window.minimized {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 100vh) scale(0.8);
+}
+
+.audio-body {
+    height: calc(100% - 45px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+/* Earth theme (default - brown/green tones) */
+.audio-window.theme-earth .audio-body {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+/* Water theme (blue/purple/pink tones) */
+.audio-window.theme-water .audio-body {
+    background: linear-gradient(135deg, #0a0e27 0%, #1a0d2e 50%, #2d1b3d 100%);
+}
+
+.audio-info {
+    text-align: center;
+    width: 100%;
+}
+
+.now-playing {
+    color: #888;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.song-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Earth theme colors */
+.audio-window.theme-earth .song-name {
+    color: #00ff00;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+/* Water theme colors */
+.audio-window.theme-water .song-name {
+    color: #00d4ff;
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.6), 0 0 20px rgba(138, 43, 226, 0.4);
+}
+
+#audio-visualizer {
+    width: 100%;
+    height: 180px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.audio-controls {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.audio-btn {
+    font-size: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Earth theme button */
+.audio-window.theme-earth .audio-btn {
+    background: rgba(0, 255, 0, 0.2);
+    border: 2px solid #00ff00;
+    color: #00ff00;
+}
+
+.audio-window.theme-earth .audio-btn:hover {
+    background: rgba(0, 255, 0, 0.3);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    transform: scale(1.1);
+}
+
+/* Water theme button */
+.audio-window.theme-water .audio-btn {
+    background: rgba(0, 212, 255, 0.2);
+    border: 2px solid #00d4ff;
+    color: #00d4ff;
+}
+
+.audio-window.theme-water .audio-btn:hover {
+    background: rgba(0, 212, 255, 0.3);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.5), 0 0 30px rgba(138, 43, 226, 0.3);
+    transform: scale(1.1);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    transition: width 0.1s linear;
+}
+
+/* Earth theme progress bar */
+.audio-window.theme-earth .progress-fill {
+    background: linear-gradient(90deg, #00ff00, #00aa00);
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+/* Water theme progress bar */
+.audio-window.theme-water .progress-fill {
+    background: linear-gradient(90deg, #00d4ff, #8a2be2, #ff69b4);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5), 0 0 20px rgba(138, 43, 226, 0.3);
+}
+
+.time-display {
+    text-align: center;
+    color: #888;
+    font-size: 12px;
 }
 
 /* ===========================
@@ -751,6 +1375,19 @@ body {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
+/* Earth theme (default) */
+.dock.theme-earth .dock-container {
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+/* Water theme */
+.dock.theme-water .dock-container {
+    background: rgba(20, 40, 80, 0.95);
+    border: 1px solid rgba(138, 43, 226, 0.7);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(138, 43, 226, 0.3);
+}
+
 .dock-item {
     display: flex;
     flex-direction: column;
@@ -784,6 +1421,11 @@ body {
     box-shadow: 0 0 8px #00ff00;
 }
 
+.dock.theme-water .dock-item.active::before {
+    background: #00d4ff;
+    box-shadow: 0 0 12px #00d4ff, 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
 .dock-icon {
     width: 40px;
     height: 40px;
@@ -796,15 +1438,36 @@ body {
     transition: all 0.3s ease;
 }
 
-.dock-item:hover .dock-icon {
+/* Earth theme dock icon */
+.dock.theme-earth .dock-icon {
+    background: rgba(0, 255, 0, 0.05);
+    border: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+.dock.theme-earth .dock-item:hover .dock-icon {
     background: rgba(0, 255, 0, 0.1);
     border-color: rgba(0, 255, 0, 0.4);
     box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
 }
 
-.dock-icon .icon {
-    font-size: 24px;
+.dock.theme-earth .dock-icon .icon {
     filter: drop-shadow(0 0 5px rgba(0, 255, 0, 0.3));
+}
+
+/* Water theme dock icon */
+.dock.theme-water .dock-icon {
+    background: rgba(0, 212, 255, 0.15);
+    border: 1px solid rgba(0, 212, 255, 0.4);
+}
+
+.dock.theme-water .dock-item:hover .dock-icon {
+    background: rgba(0, 212, 255, 0.25);
+    border-color: rgba(0, 212, 255, 0.7);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.5), 0 0 30px rgba(138, 43, 226, 0.3);
+}
+
+.dock.theme-water .dock-icon .icon {
+    filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.8)) drop-shadow(0 0 12px rgba(138, 43, 226, 0.5));
 }
 
 .dock-label {
@@ -817,11 +1480,21 @@ body {
     text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
 }
 
+.dock.theme-water .dock-label {
+    color: #00d4ff;
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.8), 0 0 12px rgba(138, 43, 226, 0.6);
+}
+
 .dock-separator {
     width: 1px;
     height: 32px;
     background: rgba(0, 255, 0, 0.3);
     margin: 0 2px;
+}
+
+.dock.theme-water .dock-separator {
+    background: rgba(0, 212, 255, 0.6);
+    box-shadow: 0 0 5px rgba(0, 212, 255, 0.4);
 }
 
 /* ===========================
@@ -962,11 +1635,36 @@ body {
     }
 
     .ascii-art {
-        font-size: 7px;
+        font-size: 9px;
     }
     
     .rocket-art {
         font-size: 8px;
+    }
+    
+    /* Theme-specific sizes for tablet */
+    .ascii-art[data-theme="name1"] {
+        font-size: 12px !important;
+    }
+    
+    .ascii-art[data-theme="name2"] {
+        font-size: 9px !important;
+    }
+    
+    .ascii-art[data-theme="name3"] {
+        font-size: 12px !important;
+    }
+    
+    .rocket-art[data-theme="bimage1"] {
+        font-size: 11px !important;
+    }
+    
+    .rocket-art[data-theme="bimage2"] {
+        font-size: 12px !important;
+    }
+    
+    .rocket-art[data-theme="bimage3"] {
+        font-size: 12px !important;
     }
     
     .banner-info {
@@ -1026,11 +1724,36 @@ body {
     }
 
     .ascii-art {
-        font-size: 5px;
+        font-size: 7px;
     }
     
     .rocket-art {
         font-size: 6px;
+    }
+    
+    /* Theme-specific sizes for mobile */
+    .ascii-art[data-theme="name1"] {
+        font-size: 10px !important;
+    }
+    
+    .ascii-art[data-theme="name2"] {
+        font-size: 7px !important;
+    }
+    
+    .ascii-art[data-theme="name3"] {
+        font-size: 10px !important;
+    }
+    
+    .rocket-art[data-theme="bimage1"] {
+        font-size: 9px !important;
+    }
+    
+    .rocket-art[data-theme="bimage2"] {
+        font-size: 10px !important;
+    }
+    
+    .rocket-art[data-theme="bimage3"] {
+        font-size: 10px !important;
     }
     
     .banner-stats {
