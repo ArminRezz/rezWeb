@@ -15,6 +15,15 @@ if [ -f "/etc/secrets/portfolio.json" ]; then
     echo "✓ Found portfolio.json in Secret Files, copying..."
     cp /etc/secrets/portfolio.json ./portfolio.json
     echo "✓ Copied portfolio.json from Secret Files"
+    
+    # Validate JSON
+    if python3 -m json.tool ./portfolio.json > /dev/null 2>&1; then
+        echo "✓ portfolio.json is valid JSON"
+    else
+        echo "ERROR: portfolio.json from Secret Files is invalid JSON!"
+        echo "Falling back to generation from portfolio-source/..."
+        python3 generate_fs.py || python generate_fs.py
+    fi
 else
     echo "No portfolio.json in Secret Files, generating from portfolio-source/..."
     echo "Checking Python version..."
@@ -31,6 +40,9 @@ if [ ! -f "./portfolio.json" ]; then
 else
     echo "✓ Verified portfolio.json exists"
     echo "File size: $(wc -c < portfolio.json) bytes"
+    echo "File location: $(pwd)/portfolio.json"
+    # Ensure it's readable
+    chmod 644 ./portfolio.json
 fi
 
 # Handle config.json similarly

@@ -19,13 +19,26 @@ class FileSystem {
         try {
             const response = await fetch('portfolio.json');
             if (!response.ok) {
+                console.error(`HTTP error! status: ${response.status}, statusText: ${response.statusText}`);
+                console.error('Attempted URL:', window.location.href + 'portfolio.json');
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            this.root = await response.json();
+            const data = await response.json();
+            if (!data || Object.keys(data).length === 0) {
+                console.error('portfolio.json is empty or invalid');
+                throw new Error('portfolio.json is empty or invalid');
+            }
+            this.root = data;
             this.loaded = true;
+            console.log('✓ Filesystem loaded successfully');
             return true;
         } catch (error) {
             console.error('Failed to load filesystem:', error);
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack,
+                url: window.location.href
+            });
             return false;
         }
     }
