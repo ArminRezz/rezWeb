@@ -71,6 +71,8 @@ if [ -f "./portfolio.json" ]; then
     echo "✓ portfolio.json exists and is readable"
     echo "  Size: $(wc -c < portfolio.json) bytes"
     echo "  Permissions: $(ls -l portfolio.json | awk '{print $1}')"
+    echo "  Full path: $(pwd)/portfolio.json"
+    
     # Test JSON one more time
     if python3 -c "import json; data=json.load(open('./portfolio.json')); print('✓ JSON structure valid,', len(str(data)), 'characters')" 2>&1; then
         echo "✓ Final validation passed"
@@ -78,9 +80,41 @@ if [ -f "./portfolio.json" ]; then
         echo "ERROR: Final validation failed!"
         exit 1
     fi
+    
+    # Ensure file is readable by web server
+    chmod 644 ./portfolio.json
+    echo "✓ Set permissions to 644 (readable by web server)"
+    
+    # Verify it's actually readable
+    if [ -r "./portfolio.json" ]; then
+        echo "✓ File is readable"
+    else
+        echo "ERROR: File is not readable!"
+        exit 1
+    fi
 else
     echo "ERROR: portfolio.json missing!"
     exit 1
 fi
+
+# List all files that will be published
+echo ""
+echo "Files that will be published:"
+find . -maxdepth 1 -type f \( -name "*.json" -o -name "*.html" -o -name "*.js" -o -name "*.css" \) -ls
+
+# CRITICAL: Ensure portfolio.json is explicitly in the root
+# Render might filter files, so we'll create a symlink or ensure it's there
+if [ ! -f "./portfolio.json" ]; then
+    echo "ERROR: portfolio.json is missing after all steps!"
+    exit 1
+fi
+
+# Touch the file to ensure it has a recent timestamp (helps with caching)
+touch ./portfolio.json
+
+echo ""
+echo "Final verification - portfolio.json details:"
+ls -lh ./portfolio.json
+file ./portfolio.json
 echo "=========================================="
 

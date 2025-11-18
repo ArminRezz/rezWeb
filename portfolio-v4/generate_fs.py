@@ -197,15 +197,34 @@ def generate_filesystem_json(source_dir='portfolio-source', output_file='portfol
     
     # Write to JSON file
     try:
-        with open(output_path, 'w', encoding='utf-8') as f:
+        # Use absolute path to ensure we write to the correct location
+        abs_output_path = output_path.resolve()
+        print(f"Writing to: {abs_output_path}")
+        
+        with open(abs_output_path, 'w', encoding='utf-8') as f:
             json.dump(filesystem, f, indent=2, ensure_ascii=False)
         
+        # Verify the file was written
+        if not abs_output_path.exists():
+            print(f"ERROR: File was not created at {abs_output_path}")
+            return False
+        
+        file_size = abs_output_path.stat().st_size
         print(f"\n✓ Successfully generated {output_file}")
+        print(f"  Location: {abs_output_path}")
+        print(f"  Size: {file_size} bytes")
         print(f"  Total items: {count_items(filesystem)}")
+        
+        # Ensure file is readable
+        import os
+        os.chmod(abs_output_path, 0o644)
+        
         return True
     
     except Exception as e:
         print(f"Error writing to {output_file}: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 
