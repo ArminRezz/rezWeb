@@ -1,0 +1,25 @@
+{
+  "name": "terminal-portfolio-v4",
+  "version": "4.0.0",
+  "description": "A modular terminal-based portfolio website with JSON filesystem",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "generate": "python3 generate_fs.py",
+    "dev": "npm run generate && npm start"
+  },
+  "keywords": [
+    "portfolio",
+    "terminal",
+    "javascript",
+    "frontend",
+    "modular"
+  ],
+  "author": "Armin Rezaiyan",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arminrez/portfolio-v4"
+  }
+}
+

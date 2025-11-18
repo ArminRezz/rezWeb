@@ -1,0 +1,23 @@
+Work Experience
+===============
+
+Software Engineer | Tech Company
+2023 - Present
+- Developed and maintained full-stack web applications
+- Implemented RESTful APIs using Node.js and Express
+- Collaborated with cross-functional teams in Agile environment
+- Optimized application performance and user experience
+
+Research Assistant | University Lab
+2021 - 2023
+- Conducted research in machine learning and data analysis
+- Published findings in academic conferences
+- Developed Python tools for data processing
+- Mentored undergraduate students
+
+Intern Software Developer | Startup
+Summer 2020
+- Built responsive web interfaces using React
+- Integrated third-party APIs and services
+- Participated in code reviews and sprint planning
+- Contributed to documentation and testing

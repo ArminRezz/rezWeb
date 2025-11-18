@@ -1,0 +1,26 @@
+Terminal Portfolio Website
+==========================
+
+Description:
+An interactive terminal-based portfolio website that simulates a Unix-like command-line interface.
+
+Technologies:
+- Vanilla JavaScript
+- HTML5/CSS3
+- JSON for data storage
+- Python for file system generation
+
+Features:
+- Modular filesystem loaded from JSON
+- Unix-like commands (ls, cd, pwd, cat, tree)
+- Tab completion and command history
+- Hidden files support
+- Responsive terminal design
+
+Why This Approach:
+- Unique and memorable user experience
+- Demonstrates technical skills in an interactive way
+- Easy to update content via filesystem regeneration
+- Appeals to technical recruiters and developers
+
+You're using it right now! 😊

@@ -1,0 +1,24 @@
+QR Referral System
+==================
+
+Description:
+A comprehensive referral tracking system using QR codes for seamless customer onboarding.
+
+Technologies:
+- React.js frontend
+- Node.js/Express backend
+- MongoDB database
+- QR code generation library
+
+Features:
+- Dynamic QR code generation for each referral
+- Real-time referral tracking dashboard
+- User authentication and authorization
+- Analytics and reporting tools
+
+Challenges Overcome:
+- Optimized QR code scanning for various lighting conditions
+- Implemented secure token-based authentication
+- Designed scalable database schema for growing user base
+
+GitHub: github.com/arminrez/qr-referral-system

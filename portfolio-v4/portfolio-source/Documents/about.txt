@@ -1,0 +1,12 @@
+Hi! I'm Armin Rezaiyan
+
+I'm a software engineer and developer passionate about building innovative solutions.
+With expertise in full-stack development, machine learning, and system design, 
+I love creating projects that solve real-world problems.
+
+Currently exploring:
+- Web development with React and modern JavaScript
+- Terminal-based user interfaces
+- Creative portfolio designs
+
+Feel free to explore my projects and get in touch!

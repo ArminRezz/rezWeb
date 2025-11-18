@@ -1,0 +1,29 @@
+Technical Skills
+================
+
+Programming Languages:
+- JavaScript/TypeScript
+- Python
+- Java
+- C/C++
+- SQL
+
+Web Development:
+- React.js
+- Node.js
+- HTML5/CSS3
+- REST APIs
+- Responsive Design
+
+Tools & Technologies:
+- Git/GitHub
+- Docker
+- AWS
+- MongoDB
+- PostgreSQL
+
+Other:
+- Machine Learning
+- Data Structures & Algorithms
+- System Design
+- Agile Development
