@@ -4,7 +4,11 @@
 
 set -e  # Exit on error
 
+echo "=========================================="
 echo "Starting build process..."
+echo "Current directory: $(pwd)"
+echo "Contents: $(ls -la)"
+echo "=========================================="
 
 # Check if Secret Files exist and copy them if available
 if [ -f "/etc/secrets/portfolio.json" ]; then
@@ -13,7 +17,20 @@ if [ -f "/etc/secrets/portfolio.json" ]; then
     echo "✓ Copied portfolio.json from Secret Files"
 else
     echo "No portfolio.json in Secret Files, generating from portfolio-source/..."
-    python3 generate_fs.py
+    echo "Checking Python version..."
+    python3 --version || echo "WARNING: python3 not found, trying python..."
+    python3 generate_fs.py || python generate_fs.py
+fi
+
+# Verify portfolio.json was created
+if [ ! -f "./portfolio.json" ]; then
+    echo "ERROR: portfolio.json was not created!"
+    echo "Current directory contents:"
+    ls -la
+    exit 1
+else
+    echo "✓ Verified portfolio.json exists"
+    echo "File size: $(wc -c < portfolio.json) bytes"
 fi
 
 # Handle config.json similarly
@@ -26,5 +43,8 @@ else
     # config.json is optional, so we don't fail if it doesn't exist
 fi
 
-echo "Build complete!"
+echo "=========================================="
+echo "Build complete! Final contents:"
+ls -la *.json *.html *.js *.css 2>/dev/null || echo "Some files may not exist (this is OK)"
+echo "=========================================="
 
