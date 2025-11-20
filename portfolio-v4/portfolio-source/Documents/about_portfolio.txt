@@ -1,0 +1,110 @@
+Welcome to arminOS Portfolio!
+==============================
+
+BASIC FEATURES TO CHECK OUT
+----------------------------
+
+1. Open Your Resume
+   Command: open Resume/resume.pdf
+   This opens your resume in a separate Document Viewer window that you can drag around,
+   minimize, maximize, or close. The viewer supports PDFs and images.
+
+2. Play Audio Files
+   Command: open Media/[filename].mp3
+   This opens the Audio Junkie player with a cool visualizer that responds to the music.
+   The player has two themes (earth and water) and two visualizer modes (linear bars
+   and pulse line). You can also switch between box and circular window styles!
+
+3. Customize Everything with Config
+   Command: config
+   The config command lets you change almost everything about the interface:
+   
+   Terminal Configuration:
+   - config term theme [earth|water] - Switch between green and blue themes
+   - config term banner_name [name.html] - Change the ASCII art name banner
+   - config term banner_image [image.html] - Change the ASCII art banner image
+   - config term opacity [0-100] - Adjust terminal transparency
+   - config term avatar [dancer.html] - Change the dancing avatar
+   
+   Audio Junkie Configuration:
+   - config audiojunkie theme [earth|water] - Change player theme
+   - config audiojunkie visualizer [linear|pulse] - Switch visualizer style
+   - config audiojunkie window [box|circle] - Change window shape
+   - config audiojunkie opacity [0-100] - Adjust player transparency
+   
+   OS Configuration:
+   - config os theme [earth|water] - Change overall OS theme
+   - config os bg_img [core|sky] - Change background (jungle or sky)
+   
+   Dock Configuration:
+   - config dock theme [earth|water] - Change dock theme
+   - config dock opacity [0-100] - Adjust dock transparency
+   
+   View all settings:
+   - config -help - See all available configuration options
+   - config [category] - View current settings for a category
+   - cat .term - View terminal config file directly
+   - cat .audiojunkie - View audio player config file
+   - cat .arminOS - View OS config file
+   - cat .dock - View dock config file
+
+ADVANCED FEATURES
+-----------------
+
+1. Wormhole - Import Your Config
+   Command: wormhole
+   The wormhole feature lets you import a complete configuration JSON file to customize
+   the entire interface at once. Simply drag and drop a JSON config file onto the
+   wormhole ASCII art, or use:
+   
+   Command: wormhole -t
+   This enters interactive mode where you can paste your JSON config directly into
+   the terminal on the next command.
+   
+   The config JSON should follow this structure:
+   {
+     "term": {
+       "theme": "earth",
+       "banner_name": "name1.html",
+       "banner_image": "bimage1.html",
+       "opacity": 100,
+       "avatar": "dancer.html"
+     },
+     "audiojunkie": {
+       "theme": "earth",
+       "visualizer": "linear",
+       "window": "box",
+       "opacity": 100
+     },
+     "os": {
+       "theme": "earth",
+       "bg_img": "core"
+     },
+     "dock": {
+       "theme": "earth",
+       "opacity": 100
+     }
+   }
+
+2. Config Export - Save Your Configuration
+   Command: config export
+   This displays your current configuration as JSON in the terminal. You can copy this
+   and save it to use later or share with others.
+   
+   Command: config export -d
+   This downloads your current configuration as a JSON file to your computer, which you
+   can then import later using the wormhole feature.
+
+QUICK TIPS
+----------
+
+- Click on files and directories in 'ls' output to navigate instantly
+- Chain commands with '&' (e.g., 'cd Media & ls & open lofi.mp3')
+- Use Tab completion for faster navigation
+- Click dock icons to minimize/restore windows
+- All windows are draggable - just click and drag the header
+- Terminal is resizable - look for the resize handle in the header
+- Try different themes to see the interface transform!
+
+For more information, explore the filesystem with 'ls' and 'cd' commands!
+
