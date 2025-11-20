@@ -1,0 +1,63 @@
+arminOS Alpha 0.1 - Update Summary
+===================================
+
+Releases Log:
+    - Alpha 0.0
+    - Alpha 0.1 
+
+NEW FEATURES
+------------
+
+1. Interactive File System Navigation
+   - Clickable ls output: Click on files and directories in ls listings to automatically execute commands
+   - Directories: Clicking runs "cd [dir] & ls" to navigate and list contents
+   - Text files: Clicking runs "cat [file]" to display contents
+   - Media files: Clicking runs "open [file]" to open in appropriate viewer
+
+2. Command Chaining with &
+   - Chain multiple commands together using the & operator
+   - Example: "cd Media & ls" or "cd .. & pwd & ls"
+   - All commands support chaining for flexible workflow automation
+   - Supports various spacing formats: "cmd1 & cmd2", "cmd1&cmd2", etc.
+
+3. Enhanced Dock Behavior
+   - Dock icons now toggle window states: click to minimize if open, restore if minimized/closed
+   - Consistent behavior across Terminal, Viewer, and Audio Junkie windows
+   - Smooth state transitions when toggling via dock
+
+4. Unified Window Animations
+   - All windows now use consistent opening/closing animations
+   - Smooth scale and fade transitions when opening from closed state
+   - Slide-down animation when minimizing (scale 0.8, slides to bottom)
+   - Scale-down animation when closing (scale 0.9)
+   - Transitions apply to both dock icon clicks and minimize button clicks
+
+5. Improved Minimization Consistency
+   - Minimize buttons and dock icons now behave identically
+   - Proper cleanup of inline styles to allow CSS transitions
+   - Consistent visual feedback across all window types
+
+6. Minimal content updates
+
+TECHNICAL IMPROVEMENTS
+----------------------
+
+- Enhanced executeCommand() function with recursive command chaining support
+- Improved event handling for clickable file system items
+- Unified transition CSS properties across all window types
+- Better state management for window minimize/restore operations
+
+USER EXPERIENCE
+---------------
+
+- Faster navigation: Click directories to instantly cd and ls
+- More intuitive: Visual feedback on hover for clickable items
+- Smoother animations: Consistent transitions throughout the interface
+- Better workflow: Chain commands for complex operations
+
+KNOWN LIMITATIONS
+-----------------
+
+- Command chaining executes sequentially (not in parallel)
+- Some edge cases with complex & commands may need refinement
+

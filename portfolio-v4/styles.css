@@ -100,7 +100,19 @@ body.bg-sky {
     overflow: hidden;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(0, 255, 0, 0.2);
-    transition: all 0.3s ease;
+    transition: opacity 0.3s, transform 0.3s;
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 1200px;
+    min-width: 400px;
+    min-height: 300px;
+    height: 80vh;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column; /* Stack body and header vertically */
 }
 
 /* Earth theme (default) */
@@ -120,7 +132,7 @@ body.bg-sky {
         0 20px 60px rgba(0, 0, 0, 0.5),
         0 0 40px rgba(75, 0, 130, 0.2),
         0 0 60px rgba(0, 212, 255, 0.1);
-    position: relative;
+    /* Keep position: fixed to maintain window positioning */
 }
 
 .terminal-window.theme-water::before {
@@ -158,25 +170,33 @@ body.bg-sky {
     width: 100vw !important;
     height: 100vh !important;
     max-width: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
     border-radius: 0;
     z-index: 9999;
     transform: none !important;
 }
 
+.terminal-window.maximized .resize-handle {
+    display: none;
+}
+
 .terminal-window.maximized .terminal-body {
-    height: calc(100vh - 45px) !important;
+    height: calc(100vh - 35px) !important;
 }
 
 /* Minimized state - hidden completely */
 .terminal-window.minimized {
-    animation: fadeOut 0.3s ease forwards;
+    opacity: 0;
     pointer-events: none;
+    transform: translate(-50%, 100vh) scale(0.8);
 }
 
 /* Closed state - hidden */
 .terminal-window.closed {
-    animation: fadeOut 0.3s ease forwards;
+    opacity: 0;
     pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.9);
 }
 
 /* ===========================
@@ -185,19 +205,24 @@ body.bg-sky {
 
 .terminal-header {
     background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
-    padding: 12px 15px;
+    padding: 5px 15px;
     display: flex;
     align-items: center;
     gap: 15px;
+    order: 2; /* Header comes after body visually */
+    flex-shrink: 0; /* Don't shrink the header */
+    margin-top: auto; /* Push header to bottom */
 }
 
-/* Theme-specific header borders */
+/* Theme-specific header borders - now at bottom, so use border-top */
 .terminal-window.theme-earth .terminal-header {
-    border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+    border-top: 1px solid rgba(0, 255, 0, 0.2);
+    border-bottom: none;
 }
 
 .terminal-window.theme-water .terminal-header {
-    border-bottom: 1px solid rgba(75, 0, 130, 0.5);
+    border-top: 1px solid rgba(75, 0, 130, 0.5);
+    border-bottom: none;
 }
 
 .terminal-buttons {
@@ -250,13 +275,93 @@ body.bg-sky {
 
 .terminal-body {
     padding: 20px;
-    height: 80vh;
+    height: calc(100% - 35px); /* Header is now at bottom, so same calculation */
     overflow-y: auto;
     overflow-x: hidden;
     background: #000;
     color: #00ff00;
     font-size: 14px;
     line-height: 1.4;
+    position: relative;
+    order: 1; /* Body comes first visually */
+    flex: 1; /* Take up remaining space */
+}
+
+/* Banner Image Container - holds banner image and avatar side by side */
+.banner-image-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px; /* Padding between banner image and avatar */
+    margin-bottom: 15px;
+}
+
+/* Avatar Art - inline with banner image */
+.avatar-art {
+    font-size: 15px !important;
+    line-height: 1.2;
+    margin: 0;
+    margin-top: 70px;
+    margin-left: 30px; /* Added left padding */
+    padding: 0;
+    font-weight: bold;
+    white-space: pre;
+    font-family: 'Courier New', monospace;
+    color: #00ff00;
+    min-height: 90px; /* Adjusted to match font size */
+    display: block;
+    overflow: visible;
+    font-variant-ligatures: none;
+    letter-spacing: 0;
+    word-spacing: 0;
+    tab-size: 4;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: unset;
+}
+
+/* Water theme avatar */
+.terminal-window.theme-water .avatar-art {
+    color: #87ceeb;
+}
+
+/* Resize Handle */
+.resize-handle {
+    position: absolute !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    left: auto !important;
+    width: 20px;
+    height: 20px;
+    cursor: nwse-resize;
+    z-index: 10;
+    background: transparent;
+}
+
+.resize-handle::before {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 12px 12px;
+    border-color: transparent transparent rgba(0, 255, 0, 0.3) transparent;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.resize-handle:hover::before {
+    opacity: 1;
+    border-color: transparent transparent rgba(0, 255, 0, 0.6) transparent;
+}
+
+.terminal-window.theme-water .resize-handle::before {
+    border-color: transparent transparent rgba(0, 212, 255, 0.3) transparent;
+}
+
+.terminal-window.theme-water .resize-handle:hover::before {
+    border-color: transparent transparent rgba(0, 212, 255, 0.6) transparent;
 }
 
 /* Water theme terminal body */
@@ -337,6 +442,11 @@ body.bg-sky {
 
 .terminal-window.theme-water .ls-output span:hover {
     background: rgba(255, 255, 255, 0.1);
+}
+
+.terminal-window.theme-water .ls-output .clickable-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    text-decoration: underline;
 }
 
 @keyframes waterGradient {
@@ -898,10 +1008,65 @@ body.bg-sky {
     text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
 }
 
+.coffee-container {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+}
+
 .coffee-mug {
     color: #cd853f;
     text-shadow: 0 0 5px rgba(205, 133, 63, 0.4);
     font-weight: bold;
+    display: inline-block;
+}
+
+.coffee-steam {
+    position: absolute;
+    bottom: calc(100% - 6px);
+    left: 50%;
+    transform: translateX(-40%);
+    display: flex;
+    gap: 2px;
+    height: 8px;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.steam-1,
+.steam-2,
+.steam-3 {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 10px;
+    display: inline-block;
+    animation: steamRise 2s ease-in-out infinite;
+}
+
+.steam-1 {
+    animation-delay: 0s;
+}
+
+.steam-2 {
+    animation-delay: 0.3s;
+}
+
+.steam-3 {
+    animation-delay: 0.6s;
+}
+
+@keyframes steamRise {
+    0% {
+        opacity: 0.6;
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translateY(-4px) scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.9);
+    }
 }
 
 .fish-icon {
@@ -1010,7 +1175,7 @@ body.bg-sky {
 }
 
 .viewer-body {
-    height: calc(100% - 45px);
+    height: calc(100% - 35px);
     background: #1a1a1a;
     overflow: auto;
 }
@@ -1031,7 +1196,92 @@ body.bg-sky {
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
     z-index: 1002;
-    transition: opacity 0.3s, transform 0.3s;
+    transition: opacity 0.3s, transform 0.3s, border-radius 0.3s, width 0.3s, height 0.3s;
+}
+
+/* Circle window style - scoped to audio-window only */
+#audio-window.window-circle {
+    width: 420px !important;
+    height: 420px !important;
+    min-width: 420px !important;
+    max-width: 420px !important;
+    min-height: 420px !important;
+    max-height: 420px !important;
+    border-radius: 50% !important;
+    overflow: visible !important;
+    position: relative !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8) !important;
+    border: none !important;
+    background-clip: padding-box !important;
+}
+
+/* Border progress SVG - hidden by default, shown for circle window */
+#audio-window .border-progress-svg {
+    display: none;
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    width: calc(100% + 12px);
+    height: calc(100% + 12px);
+    z-index: 0;
+    pointer-events: none;
+    transform: rotate(-90deg);
+    overflow: visible;
+}
+
+#audio-window.window-circle .border-progress-svg {
+    display: block;
+}
+
+#audio-window .border-progress-bg {
+    fill: none;
+    stroke: rgba(0, 255, 0, 0.6);
+    stroke-width: 12;
+}
+
+#audio-window.window-circle.theme-earth .border-progress-bg {
+    stroke: rgba(0, 255, 0, 0.6);
+}
+
+#audio-window.window-circle.theme-water .border-progress-bg {
+    stroke: rgba(0, 212, 255, 0.6);
+}
+
+#audio-window .border-progress-fill {
+    fill: none;
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 295.31; /* 2 * π * 47 (radius) */
+    stroke-dashoffset: 295.31;
+    transition: stroke-dashoffset 0.1s linear;
+}
+
+#audio-window.window-circle.theme-earth .border-progress-fill {
+    stroke: #00ff00;
+    filter: drop-shadow(0 0 4px rgba(0, 255, 0, 0.6));
+}
+
+#audio-window.window-circle.theme-water .border-progress-fill {
+    stroke: #00d4ff;
+    filter: drop-shadow(0 0 5px rgba(0, 212, 255, 0.7));
+}
+
+
+/* Circle window buttons - positioned at top of circle */
+.circle-window-buttons {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    gap: 8px;
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+}
+
+#audio-window.window-circle .circle-window-buttons {
+    display: flex !important;
 }
 
 /* Theme-specific header borders for Audio Junkie window */
@@ -1056,12 +1306,40 @@ body.bg-sky {
 }
 
 .audio-body {
-    height: calc(100% - 45px);
+    height: calc(100% - 35px);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
     padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Circle window body - full height, no header */
+#audio-window.window-circle .audio-body {
+    height: calc(100% - 20px) !important;
+    width: calc(100% - 20px) !important;
+    margin: 10px !important;
+    padding-top: 50px;
+    border-radius: 50%;
+    overflow: hidden !important;
+    cursor: grab;
+    position: relative;
+    z-index: 2;
+    box-sizing: border-box;
+}
+
+#audio-window.window-circle .audio-body:active {
+    cursor: grabbing;
+}
+
+/* Prevent dragging on interactive elements in circle window */
+#audio-window.window-circle .audio-body button,
+#audio-window.window-circle .audio-body canvas,
+#audio-window.window-circle .audio-body .circular-progress-container,
+#audio-window.window-circle .audio-body .audio-controls {
+    cursor: default;
+    pointer-events: auto;
 }
 
 /* Earth theme (default - brown/green tones) */
@@ -1167,10 +1445,24 @@ body.bg-sky {
     cursor: pointer;
 }
 
+/* Hide linear progress bar in circle window */
+#audio-window.window-circle .progress-bar {
+    display: none !important;
+}
+
 .progress-fill {
     height: 100%;
     width: 0%;
     transition: width 0.1s linear;
+}
+
+/* Border progress bar is clickable for seeking */
+#audio-window.window-circle {
+    cursor: pointer;
+}
+
+#audio-window.window-circle .audio-body {
+    cursor: grab;
 }
 
 /* Earth theme progress bar */
@@ -1224,6 +1516,17 @@ body.bg-sky {
 .ls-output span:hover {
     background: rgba(0, 255, 0, 0.1);
     transform: translateX(5px);
+}
+
+.ls-output .clickable-item {
+    cursor: pointer;
+    user-select: none;
+}
+
+.ls-output .clickable-item:hover {
+    background: rgba(0, 255, 0, 0.15);
+    transform: translateX(5px);
+    text-decoration: underline;
 }
 
 /* ===========================
@@ -1454,6 +1757,30 @@ body.bg-sky {
     filter: drop-shadow(0 0 5px rgba(0, 255, 0, 0.3));
 }
 
+/* SVG Logo Icons */
+.dock-icon .logo-icon {
+    width: 24px;
+    height: 24px;
+    display: block;
+    flex-shrink: 0;
+    font-size: 0; /* Override any font-size from .icon class */
+    fill: #00ff00; /* Default green for earth theme */
+    color: #00ff00;
+}
+
+/* Earth theme logo colors */
+.dock.theme-earth .dock-icon .logo-icon {
+    fill: #00ff00;
+    color: #00ff00;
+    filter: drop-shadow(0 0 5px rgba(0, 255, 0, 0.3));
+}
+
+.dock.theme-earth .dock-item:hover .dock-icon .logo-icon {
+    fill: #00ff00;
+    color: #00ff00;
+    filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.6));
+}
+
 /* Water theme dock icon */
 .dock.theme-water .dock-icon {
     background: rgba(0, 212, 255, 0.15);
@@ -1468,6 +1795,19 @@ body.bg-sky {
 
 .dock.theme-water .dock-icon .icon {
     filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.8)) drop-shadow(0 0 12px rgba(138, 43, 226, 0.5));
+}
+
+/* Water theme logo colors */
+.dock.theme-water .dock-icon .logo-icon {
+    fill: #00d4ff;
+    color: #00d4ff;
+    filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.8)) drop-shadow(0 0 12px rgba(138, 43, 226, 0.5));
+}
+
+.dock.theme-water .dock-item:hover .dock-icon .logo-icon {
+    fill: #00d4ff;
+    color: #00d4ff;
+    filter: drop-shadow(0 0 12px rgba(0, 212, 255, 1)) drop-shadow(0 0 18px rgba(138, 43, 226, 0.8));
 }
 
 .dock-label {
@@ -1710,6 +2050,12 @@ body.bg-sky {
     .dock-icon .icon {
         font-size: 24px;
     }
+    
+    .dock-icon .logo-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 0;
+    }
 
     .dock-item:hover {
         transform: translateY(-6px) scale(1.05);
@@ -1787,6 +2133,12 @@ body.bg-sky {
 
     .dock-icon .icon {
         font-size: 20px;
+    }
+    
+    .dock-icon .logo-icon {
+        width: 20px;
+        height: 20px;
+        font-size: 0;
     }
 
     .dock-label {

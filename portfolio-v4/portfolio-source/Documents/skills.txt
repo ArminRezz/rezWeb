@@ -11,7 +11,7 @@ Programming Languages:
 Web Development:
 - React.js
 - Node.js
-- HTML5/CSS3
+- HTML/CSS
 - REST APIs
 - Responsive Design
 
@@ -25,5 +25,5 @@ Tools & Technologies:
 Other:
 - Machine Learning
 - Data Structures & Algorithms
-- System Design
+- Agentic AI
 - Agile Development

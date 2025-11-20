@@ -1,23 +1,58 @@
-Work Experience
-===============
+EXPERIENCE
 
-Software Engineer | Tech Company
-2023 - Present
-- Developed and maintained full-stack web applications
-- Implemented RESTful APIs using Node.js and Express
-- Collaborated with cross-functional teams in Agile environment
-- Optimized application performance and user experience
+Research & Development Engineer Intern
+Auria Space · May 2025 - Present · Remote
+- Designed and developed AI chatbot prototypes with Python for satellite imaging applications
+- Presented working demo to external customer showcasing agent integrations
+- Researched and evaluated AI infrastructure platforms, selected AWS Bedrock for deployment
+- Updated backend API endpoints using C# to expand data access for AI agent
+- Currently developing production-ready MCP-based agent for AWS Bedrock deployment
+Skills: AI Agent Development, Python, C#, AWS Bedrock, API Integration
 
-Research Assistant | University Lab
-2021 - 2023
-- Conducted research in machine learning and data analysis
-- Published findings in academic conferences
-- Developed Python tools for data processing
-- Mentored undergraduate students
+Software Developer Intern
+Vortex Vector · Jun 2024 - Aug 2024 · Hybrid
+- Created Java module increasing efficiency of hardware selection in assembly system framework
+- Utilized AWS DynamoDB to manage hardware collections (hinges, clamps, handles)
+- Employed Python for parsing product data, extracting hardware attributes and specifications
+Skills: Java, Python, AWS DynamoDB, Data Parsing
 
-Intern Software Developer | Startup
-Summer 2020
-- Built responsive web interfaces using React
-- Integrated third-party APIs and services
-- Participated in code reviews and sprint planning
-- Contributed to documentation and testing
+Software Engineer Intern
+Dulles Glass · Jun 2023 - Nov 2023 · Hybrid
+- Developed dynamic frontend tool using React and TypeScript for product table management
+- Integrated REST APIs to retrieve and update product information in SQL database
+- Contributed in Agile DevOps environment with daily stand-ups and Trello task management
+Skills: React.js, TypeScript, REST APIs, SQL, Agile/DevOps
+
+Artificial Intelligence and Machine Learning Intern
+NASA - GES DISC · Jun 2023 - Aug 2023 · Remote
+- Developed primary knowledge graph for dataset information and subsidiary PDF content analysis
+- Increased search discoverability by 25% by linking PDF knowledge graph to GES DISC vector database
+- Co-authored publication presented at American Geophysical Union Fall Meeting
+Skills: Python, Weaviate, Vector Databases, Machine Learning, NumPy
+
+Chess Tutor
+Chess Wizards, Inc · Jan 2023 - Jun 2023 · On-site
+- Led engaging chess lessons for students of all ages and skill levels
+- Helped students improve strategies and techniques, tracking progress and achievements
+
+Artificial Intelligence / Machine Learning Intern
+NASA - GES DISC · Jun 2022 - Aug 2022 · On-site
+- Researched Learning To Rank (LTR) in Machine Learning to improve search relevance
+- Designed program transforming user interaction data into LTR training prioritization lists
+- Trained XGBoost model, improving NDCG scores from 36% to 81% on test data
+Skills: Python, XGBoost, NumPy, Pandas, Machine Learning
+
+Computational Modeling / Visualization Intern
+National Institute of Standards and Technology (NIST) · Jun 2022 - Aug 2022 · On-site
+- Researched relationship between dielectric energy and RF transmissions from wearable devices
+- Utilized Paraview to examine Human Body Model interactions with RF waves
+- Implemented immersive 3D visualizations using VR/CAVE on Paraview for data analysis
+Skills: Paraview, Virtual Reality (VR), Research, Data Visualization
+
+Software Engineering Intern
+Dulles Glass & Mirror · Jun 2021 - Aug 2021 · On-site
+- Collaborated with team to design and build web-based product configuration application
+- Employed HTML, JavaScript, Node.js, Java, SQL, and Git for platform development
+- Processed hardware specification documents, converting CSV and DynamoDB files to JSON
+- Worked in Agile environment with daily scrum meetings and Trello task management
+Skills: HTML, JavaScript, Node.js, Java, SQL, Git, JSON, Agile/DevOps

@@ -1,0 +1,111 @@
+arminOS Alpha 0.0 - Initial Release
+====================================
+
+Release Date: 2024
+
+OVERVIEW
+--------
+
+arminOS is a terminal-based portfolio website that simulates a desktop operating system experience. Built with vanilla JavaScript, HTML, and CSS, it provides an interactive file system navigation experience with a modern, customizable interface.
+
+CORE FEATURES
+-------------
+
+1. Terminal Interface
+   - Full-featured terminal emulator with command prompt
+   - Command history with arrow key navigation
+   - Tab completion for files and directories
+   - Customizable prompt with ASCII art coffee mug and steam animation
+   - Support for multiple command types and arguments
+
+2. File System Navigation
+   - Dynamic file system loaded from portfolio.json
+   - Commands: ls, cd, pwd, tree, cat
+   - Support for nested directories and hidden files
+   - Path resolution for relative and absolute paths
+   - File type detection (text, media, directories)
+
+3. Window Management
+   - Draggable windows (Terminal, Viewer, Audio Junkie)
+   - Minimize, maximize, and close controls
+   - Resizable terminal window
+   - Independent window positioning and state management
+   - Window themes and opacity controls
+
+4. Media Viewers
+   - PDF Viewer: Opens PDFs in a separate viewer window
+   - Image Viewer: Displays images in viewer window
+   - Audio Junkie: Custom audio player with visualizer
+     - Linear and pulse visualization modes
+     - Earth and water themes
+     - Box and circular window styles
+     - Progress tracking and playback controls
+
+5. Dock System
+   - Bottom navigation bar with app icons
+   - Dynamic app icons (Viewer, Audio Junkie appear when in use)
+   - GitHub and LinkedIn links with SVG icons
+   - Theme-aware styling (earth/water)
+   - Dock opacity and theme configuration
+
+6. Theming System
+   - Earth theme (default): Green/black terminal, jungle background
+   - Water theme: Blue/purple terminal, sky background with clouds
+   - Configurable via .term, .audiojunkie, .dock, and .arminOS files
+   - Custom ASCII art banners and images
+   - Theme-specific colors, fonts, and animations
+
+7. Configuration Management
+   - Terminal config (.term): banner, theme, opacity, avatar
+   - Audio Junkie config (.audiojunkie): theme, opacity, visualizer, window style
+   - Dock config (.dock): theme, opacity
+   - OS config (.arminOS): background image, theme
+   - Config command for live updates
+   - Wormhole feature for JSON config import/export
+   - Drag-and-drop config file support
+
+8. ASCII Art & Visuals
+   - Customizable banner names and images
+   - Animated ASCII dancer/avatar that responds to music
+   - Quote display with theme-specific styling
+   - Background animations (jungle patterns, clouds, birds)
+   - Steam animation on coffee mug prompt
+
+9. Command Set
+   - File operations: ls, cd, pwd, tree, cat, open, close
+   - System: help, about, whoami, date, echo
+   - Utilities: clear, bclear, history, config, wormhole
+
+TECHNICAL ARCHITECTURE
+----------------------
+
+- Frontend-only architecture (HTML, CSS, JavaScript)
+- Modular JavaScript design (filesystem.js, main.js)
+- JSON-based content management (portfolio.json)
+- Python script for generating filesystem JSON (generate_fs.py)
+- Dynamic command execution
+- CSS animations and transitions
+- Canvas API for audio visualization
+- FileReader API for drag-and-drop
+- Local storage for state management
+
+USER INTERFACE
+-------------
+
+- Terminal window with header controls
+- Styled output with syntax highlighting
+- Clickable file links
+- Hover effects and visual feedback
+- Smooth animations and transitions
+- Theme-aware color schemes
+- Custom fonts and typography
+
+KNOWN LIMITATIONS
+-----------------
+
+- Frontend-only (no backend)
+- Static content (requires JSON regeneration for updates)
+- Limited file operations (read-only simulation)
+- No file editing capabilities
+- Command chaining not yet implemented
+

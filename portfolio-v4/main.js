@@ -11,9 +11,14 @@ let commandHistory = [];
 let historyIndex = -1;
 let musicPlayer = null;
 let currentTrack = null;
+
+// Track currently open files
+let openViewerFile = null;  // Currently open file in viewer (path)
+let openAudioFile = null;   // Currently open file in audio player (path)
 let termConfig = {
     banner_name: 'name1.html',
     banner_image: 'bimage1.html',
+    avatar: 'dancer.html',
     opacity: 100,
     theme: 'earth',
     quote: 'asimov'
@@ -22,7 +27,8 @@ let termConfig = {
 let audioJunkieConfig = {
     opacity: 100,
     theme: 'earth',
-    visualizer: 'linear'
+    visualizer: 'linear',
+    window: 'box'
 };
 
 let dockConfig = {
@@ -40,6 +46,36 @@ let input, output, prompt;
 
 // Input state
 let waitingForJSONInput = false;
+let lastTabCompletionLine = null; // Track last tab completion output line
+let hasShownCompletions = false; // Track if we've shown completions (for second Tab press)
+let currentCompletions = []; // Current list of completions
+let completionIndex = -1; // Current index in completions (for cycling)
+let lastCompletionContext = null; // Context of last completion (command, position, etc.)
+
+// Available commands for tab completion
+const AVAILABLE_COMMANDS = [
+    'help', 'ls', 'cd', 'pwd', 'cat', 'open', 'close', 'tree',
+    'clear', 'cls', 'whoami', 'date', 'echo', 'banner', 'snake',
+    'history', 'about', 'config', 'bclear', 'wormhole'
+];
+
+// Config categories and settings for tab completion
+const CONFIG_CATEGORIES = {
+    'term': ['banner_name', 'banner_image', 'avatar', 'opacity', 'theme', 'quote'],
+    'audiojunkie': ['opacity', 'theme', 'visualizer', 'window'],
+    'aj': ['opacity', 'theme', 'visualizer', 'window'], // alias
+    'dock': ['opacity', 'theme'],
+    'os': ['bg_img', 'theme']
+};
+
+const CONFIG_VALUES = {
+    'theme': ['earth', 'water'],
+    'quote': ['asimov', 'watts'],
+    'visualizer': ['linear', 'pulse'],
+    'bg_img': ['core', 'sky'],
+    'window': ['box', 'circle'],
+    'opacity': [] // numeric, no completion
+};
 
 /**
  * Initialize the terminal
@@ -61,6 +97,15 @@ async function init() {
     await loadTermConfig();
     await renderBanner();
     await renderQuote();
+    
+    // Preload dancer frames (avatar animation frames)
+    await loadDancerFrames();
+    
+    // Update avatar with first frame if it's already rendered
+    const avatarStatic = document.getElementById('avatar-static');
+    if (avatarStatic && dancerFrames.length > 0) {
+        avatarStatic.textContent = dancerFrames[0];
+    }
     
     // Load Audio Junkie config
     await loadAudioJunkieConfig();
@@ -97,10 +142,32 @@ async function init() {
     // Make windows draggable
     makeDraggable(document.querySelector('.terminal-window'), document.querySelector('.terminal-window .terminal-header'));
     makeDraggable(document.getElementById('viewer-window'), document.querySelector('#viewer-window .terminal-header'));
-    makeDraggable(document.getElementById('audio-window'), document.querySelector('#audio-window .terminal-header'));
+    
+    // Audio window - use header for box mode, window itself for circle mode
+    const audioWindowEl = document.getElementById('audio-window');
+    const audioHeader = audioWindowEl?.querySelector('.terminal-header');
+    const circleButtons = audioWindowEl?.querySelector('.circle-window-buttons');
+    
+    // Make draggable with header (for box mode)
+    if (audioHeader) {
+        makeDraggable(audioWindowEl, audioHeader);
+    }
+    
+    // Also make circle window draggable via circle buttons or window itself
+    if (circleButtons) {
+        makeDraggable(audioWindowEl, circleButtons);
+    }
+    // Also allow dragging by the window body when in circle mode
+    const audioBody = audioWindowEl?.querySelector('.audio-body');
+    if (audioBody) {
+        makeDraggable(audioWindowEl, audioBody, true); // Pass true to indicate it's for circle mode
+    }
     
     // Setup dock
     setupDock();
+    
+    // Setup terminal resizing
+    setupTerminalResize();
     
     // Update prompt
     updatePrompt();
@@ -128,6 +195,8 @@ async function loadTermConfig() {
                     termConfig[key] = value || 'earth';
                 } else if (key === 'quote') {
                     termConfig[key] = value || 'asimov';
+                } else if (key === 'avatar') {
+                    termConfig[key] = value || 'dancer.html';
                 } else {
                     termConfig[key] = value;
                 }
@@ -163,6 +232,8 @@ async function loadAudioJunkieConfig() {
                 audioJunkieConfig[key] = value || 'earth';
             } else if (key === 'visualizer') {
                 audioJunkieConfig[key] = value || 'linear';
+            } else if (key === 'window') {
+                audioJunkieConfig[key] = value || 'box';
             } else {
                 audioJunkieConfig[key] = value;
             }
@@ -170,9 +241,10 @@ async function loadAudioJunkieConfig() {
         }
     }
     
-    // Apply opacity and theme after loading config
+    // Apply opacity, theme, and window style after loading config
     applyAudioJunkieOpacity();
     applyAudioJunkieTheme();
+    applyAudioJunkieWindow();
 }
 
 /**
@@ -362,6 +434,84 @@ function applyAudioJunkieTheme() {
     
     // Add new theme class
     audioWindow.classList.add(`theme-${theme}`);
+    
+    // Update CSS variables for border progress if in circle mode
+    if (audioWindow.classList.contains('window-circle')) {
+        const color = theme === 'earth' ? '#00ff00' : '#00d4ff';
+        const bgColor = theme === 'earth' ? 'rgba(0, 255, 0, 0.3)' : 'rgba(0, 212, 255, 0.3)';
+        audioWindow.style.setProperty('--progress-color', color);
+        audioWindow.style.setProperty('--progress-bg', bgColor);
+    }
+}
+
+/**
+ * Apply window style to Audio Junkie (box or circle)
+ */
+function applyAudioJunkieWindow() {
+    const audioWindow = document.getElementById('audio-window');
+    const audioHeader = audioWindow?.querySelector('.terminal-header');
+    const circleButtons = audioWindow?.querySelector('.circle-window-buttons');
+    if (!audioWindow) return;
+    
+    const windowStyle = audioJunkieConfig.window || 'box';
+    
+    // Remove existing window style classes
+    audioWindow.classList.remove('window-box', 'window-circle');
+    
+    // Add new window style class
+    audioWindow.classList.add(`window-${windowStyle}`);
+    
+    // Hide/show header and circle buttons based on window style
+    if (windowStyle === 'circle') {
+        if (audioHeader) {
+            audioHeader.style.display = 'none';
+        }
+        if (circleButtons) {
+            circleButtons.style.display = 'flex';
+        }
+        // Force circular dimensions via inline styles - use !important to override
+        audioWindow.style.setProperty('width', '420px', 'important');
+        audioWindow.style.setProperty('height', '420px', 'important');
+        audioWindow.style.setProperty('border-radius', '50%', 'important');
+        audioWindow.style.setProperty('min-width', '420px', 'important');
+        audioWindow.style.setProperty('max-width', '420px', 'important');
+        audioWindow.style.setProperty('min-height', '420px', 'important');
+        audioWindow.style.setProperty('max-height', '420px', 'important');
+        audioWindow.style.setProperty('overflow', 'visible', 'important');
+        audioWindow.style.setProperty('border', 'none', 'important');
+        // Update audio body height for circle (no header)
+        const audioBody = audioWindow.querySelector('.audio-body');
+        if (audioBody) {
+            audioBody.style.height = '100%';
+            audioBody.style.borderRadius = '50%';
+        }
+    } else {
+        if (audioHeader) {
+            audioHeader.style.display = 'flex';
+        }
+        if (circleButtons) {
+            circleButtons.style.display = 'none';
+        }
+        // Reset to default box dimensions - remove inline styles
+        audioWindow.style.removeProperty('width');
+        audioWindow.style.removeProperty('height');
+        audioWindow.style.removeProperty('border-radius');
+        audioWindow.style.removeProperty('min-width');
+        audioWindow.style.removeProperty('max-width');
+        audioWindow.style.removeProperty('min-height');
+        audioWindow.style.removeProperty('max-height');
+        audioWindow.style.removeProperty('overflow');
+        audioWindow.style.removeProperty('border');
+        audioWindow.style.removeProperty('background-clip');
+        // Restore audio body height for box (with header)
+        const audioBody = audioWindow.querySelector('.audio-body');
+        if (audioBody) {
+            audioBody.style.removeProperty('height');
+            audioBody.style.removeProperty('border-radius');
+            // Ensure it uses the default CSS height
+            audioBody.style.height = '';
+        }
+    }
 }
 
 /**
@@ -403,22 +553,22 @@ function updateDockIcons(theme) {
     const icons = {
         terminal: theme === 'water' ? '🌊' : '💻',
         viewer: theme === 'water' ? '📘' : '📄',
-        audio: theme === 'water' ? '🎧' : '🎵',
-        github: theme === 'water' ? '🐋' : '🐙',
-        linkedin: theme === 'water' ? '💧' : '💼'
+        audio: theme === 'water' ? '🎧' : '🎵'
     };
     
     const terminalIcon = document.querySelector('#terminal-app .icon');
     const viewerIcon = document.querySelector('#viewer-app .icon');
     const audioIcon = document.querySelector('#audio-app .icon');
-    const githubIcon = document.querySelector('a[href*="github"] .icon');
-    const linkedinIcon = document.querySelector('a[href*="linkedin"] .icon');
     
     if (terminalIcon) terminalIcon.textContent = icons.terminal;
     if (viewerIcon) viewerIcon.textContent = icons.viewer;
     if (audioIcon) audioIcon.textContent = icons.audio;
-    if (githubIcon) githubIcon.textContent = icons.github;
-    if (linkedinIcon) linkedinIcon.textContent = icons.linkedin;
+    
+    // GitHub and LinkedIn use SVG logos, so we just update their color/filter based on theme
+    const githubLogo = document.querySelector('a[href*="github"] .logo-icon');
+    const linkedinLogo = document.querySelector('a[href*="linkedin"] .logo-icon');
+    
+    // Logos are handled via CSS filters, no need to change them here
 }
 
 /**
@@ -445,6 +595,10 @@ async function renderBanner() {
             welcomeMessage.appendChild(nameElement);
         }
         
+        // Create container for banner image and avatar (side by side)
+        const bannerContainer = document.createElement('div');
+        bannerContainer.className = 'banner-image-container';
+        
         // Load banner image
         const imageContent = await loadThemeFile(termConfig.banner_image);
         if (imageContent) {
@@ -454,12 +608,71 @@ async function renderBanner() {
             const themeImage = termConfig.banner_image.replace('.html', '');
             imageElement.setAttribute('data-theme', themeImage);
             imageElement.innerHTML = imageContent;
-            welcomeMessage.appendChild(imageElement);
+            bannerContainer.appendChild(imageElement);
         }
+        
+        // Load avatar
+        // First, try to use the first frame from dancerFrames if already loaded
+        let avatarFrame = null;
+        if (dancerFrames.length > 0 && (termConfig.avatar === 'dancer.html' || !termConfig.avatar)) {
+            avatarFrame = dancerFrames[0];
+        } else {
+            // Parse the first frame from the HTML content
+            const avatarContent = await loadThemeFile(termConfig.avatar || 'dancer.html');
+            if (avatarContent) {
+                const lines = avatarContent.split('\n');
+                let currentFrame = [];
+                let inFrame = false;
+                
+                for (const line of lines) {
+                    const trimmed = line.trim();
+                    if (trimmed.match(/^<!-- FRAME \d+ -->$/)) {
+                        if (currentFrame.length > 0 && !avatarFrame) {
+                            // We found the first frame
+                            const frameLines = currentFrame.slice(0, 5);
+                            while (frameLines.length < 5) {
+                                frameLines.push('');
+                            }
+                            avatarFrame = frameLines.join('\n');
+                            break;
+                        }
+                        inFrame = true;
+                        currentFrame = [];
+                    } else if (inFrame && !trimmed.startsWith('<!--') && !trimmed.startsWith('<!DOCTYPE') && !trimmed.startsWith('<html') && !trimmed.startsWith('<head') && !trimmed.startsWith('<title') && !trimmed.startsWith('</head') && !trimmed.startsWith('<body') && !trimmed.startsWith('</body') && !trimmed.startsWith('</html')) {
+                        if (currentFrame.length < 5) {
+                            currentFrame.push(line);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Create avatar element if we have a frame
+        if (avatarFrame) {
+            const avatarElement = document.createElement('pre');
+            avatarElement.className = 'ascii-art avatar-art';
+            avatarElement.id = 'avatar-static';
+            avatarElement.textContent = avatarFrame;
+            bannerContainer.appendChild(avatarElement);
+        } else {
+            // Fallback: use default frame
+            const avatarElement = document.createElement('pre');
+            avatarElement.className = 'ascii-art avatar-art';
+            avatarElement.id = 'avatar-static';
+            avatarElement.textContent = '     _\n \\_(\")___\n    |\n   / \\\n  |   |';
+            bannerContainer.appendChild(avatarElement);
+        }
+        
+        welcomeMessage.appendChild(bannerContainer);
         
         // Re-add welcome text
         if (welcomeText) {
             welcomeMessage.appendChild(welcomeText);
+        }
+        
+        // Setup avatar animation if music is playing
+        if (audioPlayer && !audioPlayer.paused) {
+            startDancerAnimation();
         }
     } catch (error) {
         console.error('Error rendering banner:', error);
@@ -562,20 +775,208 @@ async function loadThemeFile(filename) {
     return content;
 }
 
+// ASCII Dancer control - custom frame animation (global scope)
+let dancerFrames = [];
+let dancerFrameIndex = 0;
+let dancerAnimationId = null;
+let dancerFramesLoaded = false;
+let dancerAnalyser = null;
+let dancerDataArray = null;
+let lastDancerUpdate = 0;
+let dancerSpeed = 150; // Base speed in ms
+
 /**
- * Make a window draggable by its header
+ * Load dancer frames from dancer.html file
  */
-function makeDraggable(windowElement, headerElement) {
+async function loadDancerFrames() {
+    if (dancerFramesLoaded) return;
+    
+    try {
+        const dancerContent = await loadThemeFile('dancer.html');
+        if (!dancerContent) {
+            console.warn('Could not load dancer.html, using default frame');
+            dancerFrames = ['     _\n \\_(\")___\n    |\n   / \\\n  |   |'];
+            dancerFramesLoaded = true;
+            return;
+        }
+        
+        // Parse frames - split by lines of dashes
+        const lines = dancerContent.split('\n');
+        let currentFrame = [];
+        const frames = [];
+        let inFrame = false;
+        
+        for (const line of lines) {
+            const trimmed = line.trim();
+            // Check if line is a frame marker (HTML comment with FRAME)
+            if (trimmed.match(/^<!-- FRAME \d+ -->$/)) {
+                // If we have a frame collected, save it (normalize to exactly 5 lines)
+                if (currentFrame.length > 0) {
+                    // Take exactly first 5 lines (including empty lines)
+                    const frameLines = currentFrame.slice(0, 5);
+                    // Pad to exactly 5 lines if needed
+                    while (frameLines.length < 5) {
+                        frameLines.push('');
+                    }
+                    frames.push(frameLines.join('\n'));
+                    currentFrame = [];
+                }
+                // Start collecting new frame
+                inFrame = true;
+            } else if (inFrame && !trimmed.startsWith('<!--') && !trimmed.startsWith('<!DOCTYPE') && !trimmed.startsWith('<html') && !trimmed.startsWith('<head') && !trimmed.startsWith('<title') && !trimmed.startsWith('</head') && !trimmed.startsWith('<body') && !trimmed.startsWith('</body') && !trimmed.startsWith('</html')) {
+                // Add line to current frame (skip HTML tags and comments)
+                // Preserve the exact line including leading/trailing spaces and empty lines
+                // Only collect up to 5 lines per frame
+                if (currentFrame.length < 5) {
+                    currentFrame.push(line);
+                }
+            }
+        }
+        
+        // Add last frame if exists (even if file ends without separator)
+        if (currentFrame.length > 0) {
+            frames.push(currentFrame.join('\n'));
+        }
+        
+        console.log(`Loaded ${frames.length} dancer frames`);
+        
+        if (frames.length > 0) {
+            dancerFrames = frames;
+            dancerFramesLoaded = true;
+            console.log(`Successfully loaded ${frames.length} dancer frames`);
+        } else {
+            // Fallback to default
+            console.warn('No frames found in dancer.html, using default');
+            dancerFrames = ['     _\n \\_(\")___\n    |\n   / \\\n  |   |'];
+            dancerFramesLoaded = true;
+        }
+    } catch (error) {
+        console.error('Error loading dancer frames:', error);
+        dancerFrames = ['     _\n \\_(\")___\n    |\n   / \\\n  |   |'];
+        dancerFramesLoaded = true;
+    }
+}
+
+/**
+ * Animate through dancer frames with music-responsive speed
+ */
+function animateDancer() {
+    const avatarStatic = document.getElementById('avatar-static');
+    if (!avatarStatic || dancerFrames.length === 0) {
+        console.warn('Cannot animate: no frames or element not found');
+        return;
+    }
+    
+    const now = Date.now();
+    let shouldUpdate = false;
+    
+    // If we have audio analyser data, use it to adjust speed
+    if (dancerAnalyser && dancerDataArray) {
+        dancerAnalyser.getByteFrequencyData(dancerDataArray);
+        
+        // Calculate average energy/tempo from frequency data
+        let sum = 0;
+        for (let i = 0; i < dancerDataArray.length; i++) {
+            sum += dancerDataArray[i];
+        }
+        const average = sum / dancerDataArray.length;
+        const normalizedEnergy = average / 255; // 0 to 1
+        
+        // Adjust speed based on energy: higher energy = faster dancing
+        // Speed range: 80ms (very fast) to 200ms (slow)
+        // More energy = faster (lower interval)
+        dancerSpeed = 200 - (normalizedEnergy * 120);
+        dancerSpeed = Math.max(80, Math.min(200, dancerSpeed)); // Clamp between 80-200ms
+    }
+    
+    // Check if enough time has passed based on current speed
+    if (now - lastDancerUpdate >= dancerSpeed) {
+        shouldUpdate = true;
+        lastDancerUpdate = now;
+    }
+    
+    if (shouldUpdate) {
+        // Update the frame
+        avatarStatic.textContent = dancerFrames[dancerFrameIndex];
+        
+        // Move to next frame (cycle)
+        dancerFrameIndex = (dancerFrameIndex + 1) % dancerFrames.length;
+    }
+    
+    // Continue animation loop
+    dancerAnimationId = requestAnimationFrame(animateDancer);
+}
+
+function startDancerAnimation() {
+    const avatarStatic = document.getElementById('avatar-static');
+    if (!avatarStatic) {
+        console.warn('Avatar element not found');
+        return;
+    }
+    
+    // Stop any existing animation first
+    if (dancerAnimationId) {
+        cancelAnimationFrame(dancerAnimationId);
+        dancerAnimationId = null;
+    }
+    
+    // Reset timing
+    lastDancerUpdate = Date.now();
+    dancerSpeed = 150; // Reset to base speed
+    
+    // Load frames if not already loaded
+    if (!dancerFramesLoaded) {
+        loadDancerFrames().then(() => {
+            // Start animation after frames are loaded
+            if (dancerFrames.length > 0) {
+                console.log(`Starting dancer animation with ${dancerFrames.length} frames`);
+                dancerFrameIndex = 0;
+                dancerAnimationId = requestAnimationFrame(animateDancer);
+            } else {
+                console.warn('No dancer frames loaded');
+            }
+        });
+    } else {
+        // Frames already loaded, start animation
+        if (dancerFrames.length > 0) {
+            console.log(`Starting dancer animation with ${dancerFrames.length} frames`);
+            dancerFrameIndex = 0;
+            dancerAnimationId = requestAnimationFrame(animateDancer);
+        } else {
+            console.warn('No dancer frames available');
+        }
+    }
+}
+
+function stopDancerAnimation() {
+    const avatarStatic = document.getElementById('avatar-static');
+    if (dancerAnimationId) {
+        cancelAnimationFrame(dancerAnimationId);
+        dancerAnimationId = null;
+    }
+    // Reset to first frame
+    if (avatarStatic && dancerFrames.length > 0) {
+        dancerFrameIndex = 0;
+        avatarStatic.textContent = dancerFrames[0];
+    }
+    // Reset speed
+    dancerSpeed = 150;
+}
+
+/**
+ * Make a window draggable by its header or body (for circle mode)
+ */
+function makeDraggable(windowElement, dragElement, allowBodyDrag = false) {
     let isDragging = false;
     let currentX = 0;
     let currentY = 0;
     let initialX = 0;
     let initialY = 0;
-    let xOffset = 0;
-    let yOffset = 0;
+    let startMouseX = 0;
+    let startMouseY = 0;
     let animationId = null;
 
-    headerElement.addEventListener('mousedown', dragStart);
+    dragElement.addEventListener('mousedown', dragStart);
     document.addEventListener('mousemove', drag);
     document.addEventListener('mouseup', dragEnd);
 
@@ -585,58 +986,167 @@ function makeDraggable(windowElement, headerElement) {
             return;
         }
         
+        // Don't drag if clicking on interactive elements (buttons, progress bars, canvas)
+        if (e.target.tagName === 'BUTTON' || 
+            e.target.tagName === 'CANVAS' ||
+            e.target.closest('.progress-bar') ||
+            e.target.closest('.circular-progress-container') ||
+            e.target.closest('.audio-btn') ||
+            e.target.closest('.audio-controls')) {
+            return;
+        }
+        
         // Don't drag if window is maximized
         if (windowElement.classList.contains('maximized')) {
             return;
         }
 
-        initialX = e.clientX - xOffset;
-        initialY = e.clientY - yOffset;
-
-        if (e.target === headerElement || headerElement.contains(e.target)) {
-            isDragging = true;
-            headerElement.style.cursor = 'grabbing';
+        // For body drag (circle mode), allow dragging from anywhere
+        // For header drag (box mode), only allow from header
+        const isClickOnDragElement = e.target === dragElement || dragElement.contains(e.target);
+        
+        if (isClickOnDragElement || (allowBodyDrag && windowElement.classList.contains('window-circle'))) {
+            // Prevent multiple drag handlers from interfering
+            if (windowElement.dataset.isDragging === 'true') {
+                return;
+            }
+            
+            // Disable transition FIRST before reading position to prevent any animation interference
             windowElement.style.transition = 'none';
+            windowElement.style.willChange = 'transform';
+            
+            // Force a reflow to ensure transition is disabled before we read position
+            void windowElement.offsetHeight;
+            
+            // Store initial mouse position
+            startMouseX = e.clientX;
+            startMouseY = e.clientY;
+            
+            // Get current transform FIRST (before reading position) to avoid any mismatch
+            const computedStyle = window.getComputedStyle(windowElement);
+            const isFixed = computedStyle.position === 'fixed';
+            const currentTransform = computedStyle.transform;
+            
+            // Get the ACTUAL element position
+            const rect = windowElement.getBoundingClientRect();
+            const elementCenterX = rect.left + rect.width / 2;
+            const elementCenterY = rect.top + rect.height / 2;
+            
+            // Calculate current transform offset from actual position
+            if (isFixed) {
+                const centerX = window.innerWidth / 2;
+                const centerY = window.innerHeight / 2;
+                
+                // Try to get existing transform values first (preferred method)
+                if (currentTransform && currentTransform !== 'none') {
+                    try {
+                        const matrix = new DOMMatrix(currentTransform);
+                        currentX = matrix.e;
+                        currentY = matrix.f;
+                    } catch (err) {
+                        // If parsing fails, calculate from actual position
+                        currentX = elementCenterX - centerX;
+                        currentY = elementCenterY - centerY;
+                    }
+                } else {
+                    // No transform, calculate from actual position
+                    currentX = elementCenterX - centerX;
+                    currentY = elementCenterY - centerY;
+                }
+                
+                // Round to prevent sub-pixel issues that can cause jumpiness
+                currentX = Math.round(currentX * 10) / 10;
+                currentY = Math.round(currentY * 10) / 10;
+                
+                // DON'T set transform on drag start - this prevents any visible jump
+                // The transform will be updated during drag movement only
+            } else {
+                currentX = 0;
+                currentY = 0;
+            }
+            
+            // Store the offset from mouse to element center at drag start
+            // This is used to maintain the same relative position during drag
+            initialX = e.clientX - elementCenterX;
+            initialY = e.clientY - elementCenterY;
+            
+            // Mark as dragging to prevent conflicts
+            windowElement.dataset.isDragging = 'true';
+            isDragging = true;
+            dragElement.style.cursor = 'grabbing';
+            if (allowBodyDrag) {
+                windowElement.style.cursor = 'grabbing';
+            }
         }
     }
 
     function drag(e) {
-        if (isDragging) {
-            e.preventDefault();
+        if (!isDragging) return;
+        
+        e.preventDefault();
+        
+        const computedStyle = window.getComputedStyle(windowElement);
+        const isFixed = computedStyle.position === 'fixed';
+        
+        if (isFixed) {
+            // For fixed elements, calculate new offset from center
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
             
-            currentX = e.clientX - initialX;
-            currentY = e.clientY - initialY;
-
-            xOffset = currentX;
-            yOffset = currentY;
-
-            // Use requestAnimationFrame for smooth updates
-            if (animationId) {
-                cancelAnimationFrame(animationId);
-            }
+            // Calculate where the element center should be based on mouse position
+            // Mouse is at (e.clientX, e.clientY), and it was initially offset by (initialX, initialY) from element center
+            // So element center should be at: mouse position - initial offset
+            const newElementCenterX = e.clientX - initialX;
+            const newElementCenterY = e.clientY - initialY;
             
-            animationId = requestAnimationFrame(() => {
-                setTranslate(currentX, currentY, windowElement);
-            });
+            // The transform offset is the difference between new center and screen center
+            currentX = newElementCenterX - centerX;
+            currentY = newElementCenterY - centerY;
+            
+            // Apply transform directly for smooth dragging (no requestAnimationFrame for immediate response)
+            windowElement.style.transform = `translate(calc(-50% + ${currentX}px), calc(-50% + ${currentY}px))`;
+        } else {
+            // For non-fixed elements, calculate movement from start
+            const deltaX = e.clientX - startMouseX;
+            const deltaY = e.clientY - startMouseY;
+            
+            // Apply movement to initial position
+            windowElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
         }
     }
 
     function dragEnd(e) {
         if (isDragging) {
-            initialX = currentX;
-            initialY = currentY;
             isDragging = false;
-            headerElement.style.cursor = 'grab';
-            windowElement.style.transition = '';
+            
+            // Clear dragging flag
+            windowElement.dataset.isDragging = 'false';
+            
+            // Cancel any pending animation frame
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            
+            dragElement.style.cursor = allowBodyDrag ? '' : 'grab';
+            if (allowBodyDrag) {
+                windowElement.style.cursor = '';
+            }
+            // Re-enable transition after drag ends
+            windowElement.style.transition = 'all 0.3s ease';
+            windowElement.style.willChange = 'auto';
         }
     }
 
     function setTranslate(xPos, yPos, el) {
-        el.style.transform = `translate(${xPos}px, ${yPos}px)`;
+        // This function is no longer used, but kept for compatibility
+        // The transform is now set directly in the drag function
     }
     
     // Set initial cursor
-    headerElement.style.cursor = 'grab';
+    if (!allowBodyDrag) {
+        dragElement.style.cursor = 'grab';
+    }
 }
 
 /**
@@ -664,14 +1174,40 @@ function setupWindowControls() {
     minimizeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         const isMinimizing = !terminalWindow.classList.contains('minimized');
+        const wasMaximized = terminalWindow.classList.contains('maximized');
         terminalWindow.classList.toggle('minimized');
         
-        // Update active state in dock
-        const terminalApp = document.getElementById('terminal-app');
-        if (terminalApp) {
-            if (isMinimizing) {
+        if (isMinimizing) {
+            // Clear inline styles when minimizing to allow CSS transitions to work
+            // This is especially important after dragging, which sets inline transform
+            terminalWindow.style.opacity = '';
+            terminalWindow.style.pointerEvents = '';
+            terminalWindow.style.transform = ''; // Clear inline transform so CSS can take over
+            
+            // If minimizing from maximized state, keep maximized class but restore dock
+            if (wasMaximized) {
+                // Keep maximized class so we can restore to maximized later
+                // Just restore dock visibility since window is hidden anyway
+                const dock = document.querySelector('.dock');
+                if (dock) {
+                    dock.classList.remove('hidden');
+                }
+            }
+            
+            // Update active state in dock
+            const terminalApp = document.getElementById('terminal-app');
+            if (terminalApp) {
                 terminalApp.classList.remove('active');
-            } else {
+            }
+        } else {
+            // Restore when un-minimizing
+            terminalWindow.style.opacity = '';
+            terminalWindow.style.pointerEvents = '';
+            terminalWindow.style.transform = ''; // Clear inline transform to restore default position
+            
+            // Update active state in dock
+            const terminalApp = document.getElementById('terminal-app');
+            if (terminalApp) {
                 terminalApp.classList.add('active');
             }
         }
@@ -683,9 +1219,20 @@ function setupWindowControls() {
         const isMaximizing = !terminalWindow.classList.contains('maximized');
         terminalWindow.classList.toggle('maximized');
         
-        // Reset position when maximizing
         if (isMaximizing) {
+            // Save the current transform before maximizing
+            const currentTransform = window.getComputedStyle(terminalWindow).transform;
+            terminalWindow.dataset.originalTransform = currentTransform;
             terminalWindow.style.transform = 'none';
+        } else {
+            // Restore the original transform when unmaximizing
+            const originalTransform = terminalWindow.dataset.originalTransform;
+            if (originalTransform && originalTransform !== 'none') {
+                terminalWindow.style.transform = originalTransform;
+            } else {
+                // Default to centered position if no transform was saved
+                terminalWindow.style.transform = 'translate(-50%, -50%)';
+            }
         }
         
         // Hide/show dock when maximized
@@ -720,6 +1267,9 @@ function setupViewerControls() {
         // Clear viewer content
         document.getElementById('viewer-iframe').src = '';
         document.getElementById('viewer-image').src = '';
+        
+        // Clear tracking variable
+        openViewerFile = null;
     });
     
     // Minimize button - hide viewer
@@ -728,10 +1278,18 @@ function setupViewerControls() {
         const isMinimizing = !viewerWindow.classList.contains('minimized');
         viewerWindow.classList.toggle('minimized');
         
-        // Update active state in dock
         if (isMinimizing) {
+            // Clear inline styles when minimizing to allow CSS transitions to work
+            // This is especially important after dragging, which sets inline transform
+            viewerWindow.style.opacity = '';
+            viewerWindow.style.pointerEvents = '';
+            viewerWindow.style.transform = ''; // Clear inline transform so CSS can take over
             viewerApp.classList.remove('active');
         } else {
+            // Restore when un-minimizing
+            viewerWindow.style.opacity = '';
+            viewerWindow.style.pointerEvents = '';
+            viewerWindow.style.transform = ''; // Clear inline transform to restore default position
             viewerApp.classList.add('active');
         }
     });
@@ -763,8 +1321,10 @@ function setupViewerControls() {
 function setupAudioControls() {
     const audioWindow = document.getElementById('audio-window');
     const audioApp = document.getElementById('audio-app');
-    const closeBtn = audioWindow.querySelector('.btn-close');
-    const minimizeBtn = audioWindow.querySelector('.btn-minimize');
+    const closeBtn = audioWindow.querySelector('.terminal-header .btn-close');
+    const minimizeBtn = audioWindow.querySelector('.terminal-header .btn-minimize');
+    const circleCloseBtn = audioWindow.querySelector('.circle-window-buttons .btn-close');
+    const circleMinimizeBtn = audioWindow.querySelector('.circle-window-buttons .btn-minimize');
     const audioPlayer = document.getElementById('audio-player');
     const playPauseBtn = document.getElementById('play-pause-btn');
     const progressBar = document.querySelector('.progress-bar');
@@ -779,9 +1339,8 @@ function setupAudioControls() {
     let bufferLength;
     let animationId;
     
-    // Close button - stop music and hide window
-    closeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
+    // Close button handler (shared for both header and circle buttons)
+    function handleClose() {
         audioPlayer.pause();
         audioPlayer.currentTime = 0;
         audioWindow.classList.add('closed');
@@ -791,31 +1350,73 @@ function setupAudioControls() {
         audioApp.style.display = 'none';
         audioApp.classList.remove('active');
         
+        // Clear tracking variable
+        openAudioFile = null;
+        
         // Stop visualization
         if (animationId) {
             cancelAnimationFrame(animationId);
+            animationId = null;
         }
-    });
+        
+        // Stop dancer animation
+        stopDancerAnimation();
+    }
     
-    // Minimize button - just hide window, keep playing
-    minimizeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
+    // Close button - stop music and hide window (header)
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleClose();
+        });
+    }
+    
+    // Close button (circle window)
+    if (circleCloseBtn) {
+        circleCloseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleClose();
+        });
+    }
+    
+    // Minimize button handler (shared for both header and circle buttons)
+    function handleMinimize() {
         const isMinimizing = !audioWindow.classList.contains('minimized');
         audioWindow.classList.toggle('minimized');
         
         if (isMinimizing) {
-            // Clear inline styles when minimizing
+            // Clear inline styles when minimizing to allow CSS transitions to work
+            // This is especially important after dragging, which sets inline transform
             audioWindow.style.opacity = '';
             audioWindow.style.pointerEvents = '';
+            audioWindow.style.transform = ''; // Clear inline transform so CSS can take over
             audioApp.classList.remove('active');
         } else {
             // Restore when un-minimizing
             audioWindow.style.pointerEvents = 'auto';
+            audioWindow.style.transform = ''; // Clear inline transform to restore default position
             applyAudioJunkieOpacity();
             applyAudioJunkieTheme();
+            applyAudioJunkieWindow();
             audioApp.classList.add('active');
         }
-    });
+    }
+    
+    // Minimize button - just hide window, keep playing (header)
+    if (minimizeBtn) {
+        minimizeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleMinimize();
+        });
+    }
+    
+    // Minimize button (circle window)
+    if (circleMinimizeBtn) {
+        circleMinimizeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleMinimize();
+        });
+    }
     
     // Play/Pause button
     playPauseBtn.addEventListener('click', () => {
@@ -828,17 +1429,76 @@ function setupAudioControls() {
         }
     });
     
-    // Progress bar click to seek
+    // Progress bar click to seek (linear)
     progressBar.addEventListener('click', (e) => {
         const rect = progressBar.getBoundingClientRect();
         const percent = (e.clientX - rect.left) / rect.width;
         audioPlayer.currentTime = percent * audioPlayer.duration;
     });
     
-    // Update progress bar
+    // Border progress bar click to seek (for circle window)
+    const audioWindowForSeek = document.getElementById('audio-window');
+    if (audioWindowForSeek) {
+        audioWindowForSeek.addEventListener('click', (e) => {
+            // Only handle clicks on the border/window edge when in circle mode
+            if (!audioWindowForSeek.classList.contains('window-circle')) {
+                return;
+            }
+            
+            // Don't seek if clicking on interactive elements
+            if (e.target.tagName === 'BUTTON' || 
+                e.target.tagName === 'CANVAS' ||
+                e.target.closest('.progress-bar') ||
+                e.target.closest('.audio-btn') ||
+                e.target.closest('.audio-controls') ||
+                e.target.closest('.circle-window-buttons')) {
+                return;
+            }
+            
+            const rect = audioWindowForSeek.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const clickX = e.clientX - centerX;
+            const clickY = e.clientY - centerY;
+            
+            // Calculate distance from center
+            const distance = Math.sqrt(clickX * clickX + clickY * clickY);
+            const radius = rect.width / 2;
+            
+            // Only seek if clicking near the border (within 20px of edge)
+            if (distance > radius - 20) {
+                // Calculate angle from center (0 to 2π, starting from top)
+                let angle = Math.atan2(clickY, clickX);
+                // Adjust to start from top (rotate by -90 degrees)
+                angle = angle + Math.PI / 2;
+                // Normalize to 0-2π
+                if (angle < 0) angle += 2 * Math.PI;
+                
+                // Convert angle to percentage (0-1)
+                const percent = angle / (2 * Math.PI);
+                audioPlayer.currentTime = percent * audioPlayer.duration;
+            }
+        });
+    }
+    
+    // Update progress bar (both linear and border progress)
     audioPlayer.addEventListener('timeupdate', () => {
         const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        
+        // Update linear progress bar
         progressFill.style.width = `${percent}%`;
+        
+        // Update border progress bar (for circle window)
+        const audioWindow = document.getElementById('audio-window');
+        if (audioWindow && audioWindow.classList.contains('window-circle')) {
+            const borderProgressFill = document.getElementById('border-progress-fill');
+            if (borderProgressFill) {
+                const circumference = 2 * Math.PI * 47; // radius is 47
+                const offset = circumference - (percent / 100) * circumference;
+                borderProgressFill.style.strokeDashoffset = offset;
+            }
+        }
+        
         currentTimeSpan.textContent = formatTime(audioPlayer.currentTime);
     });
     
@@ -851,6 +1511,16 @@ function setupAudioControls() {
     audioPlayer.addEventListener('ended', () => {
         playPauseBtn.textContent = '▶️';
         progressFill.style.width = '0%';
+        
+        // Reset border progress
+        const audioWindow = document.getElementById('audio-window');
+        if (audioWindow && audioWindow.classList.contains('window-circle')) {
+            const borderProgressFill = document.getElementById('border-progress-fill');
+            if (borderProgressFill) {
+                const circumference = 2 * Math.PI * 45;
+                borderProgressFill.style.strokeDashoffset = circumference;
+            }
+        }
     });
     
     // Setup audio visualization
@@ -864,6 +1534,10 @@ function setupAudioControls() {
             analyser.fftSize = 256;
             bufferLength = analyser.frequencyBinCount;
             dataArray = new Uint8Array(bufferLength);
+            
+            // Share analyser and dataArray with dancer animation
+            dancerAnalyser = analyser;
+            dancerDataArray = dataArray;
         }
         visualize();
     }
@@ -998,9 +1672,28 @@ function setupAudioControls() {
     audioPlayer.addEventListener('play', () => {
         if (!audioContext) {
             setupVisualization();
-        } else if (audioContext.state === 'suspended') {
-            audioContext.resume();
+        } else {
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            // Restart visualization if it was stopped
+            if (!animationId) {
+                visualize();
+            }
         }
+        
+        // Start dancer animation
+        startDancerAnimation();
+    });
+    
+    // Stop dancer animation when audio pauses
+    audioPlayer.addEventListener('pause', () => {
+        stopDancerAnimation();
+    });
+    
+    // Stop dancer animation when audio ends
+    audioPlayer.addEventListener('ended', () => {
+        stopDancerAnimation();
     });
     
     // Format time helper
@@ -1012,17 +1705,155 @@ function setupAudioControls() {
 }
 
 /**
+ * Setup terminal window resizing
+ */
+function setupTerminalResize() {
+    const terminalWindow = document.querySelector('.terminal-window');
+    const resizeHandle = document.getElementById('terminal-resize-handle');
+    
+    if (!terminalWindow || !resizeHandle) return;
+    
+    let isResizing = false;
+    let startX = 0;
+    let startY = 0;
+    let startWidth = 0;
+    let startHeight = 0;
+    
+    resizeHandle.addEventListener('mousedown', (e) => {
+        // Don't resize if maximized
+        if (terminalWindow.classList.contains('maximized')) {
+            return;
+        }
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        isResizing = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        
+        const rect = terminalWindow.getBoundingClientRect();
+        startWidth = rect.width;
+        startHeight = rect.height;
+        
+        document.addEventListener('mousemove', handleResize);
+        document.addEventListener('mouseup', stopResize);
+        
+        // Disable transition during resize for smooth dragging
+        terminalWindow.style.transition = 'none';
+    });
+    
+    function handleResize(e) {
+        if (!isResizing) return;
+        
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+        
+        // Calculate new dimensions
+        let newWidth = startWidth + deltaX;
+        let newHeight = startHeight + deltaY;
+        
+        // Apply min/max constraints
+        const minWidth = 400;
+        const minHeight = 300;
+        const maxWidth = window.innerWidth - 40; // Account for padding
+        const maxHeight = window.innerHeight - 40;
+        
+        newWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
+        newHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
+        
+        // Preserve current transform/position before resizing
+        const currentTransform = window.getComputedStyle(terminalWindow).transform;
+        
+        // Apply new size
+        terminalWindow.style.width = `${newWidth}px`;
+        terminalWindow.style.height = `${newHeight}px`;
+        
+        // Restore transform to maintain position (windows are independent)
+        if (currentTransform && currentTransform !== 'none') {
+            terminalWindow.style.transform = currentTransform;
+        }
+    }
+    
+    function stopResize() {
+        if (!isResizing) return;
+        
+        isResizing = false;
+        document.removeEventListener('mousemove', handleResize);
+        document.removeEventListener('mouseup', stopResize);
+        
+        // Re-enable transition
+        terminalWindow.style.transition = 'all 0.3s ease';
+    }
+}
+
+/**
  * Setup dock interactions
  */
 function setupDock() {
     const terminalApp = document.getElementById('terminal-app');
     const terminalWindow = document.querySelector('.terminal-window');
     
-    // Terminal app - reopen terminal
+    // Terminal app - toggle terminal (minimize if open, restore if minimized/closed)
     terminalApp.addEventListener('click', (e) => {
         e.stopPropagation();
+        
+        const isMinimized = terminalWindow.classList.contains('minimized');
+        const isClosed = terminalWindow.classList.contains('closed');
+        const isMaximized = terminalWindow.classList.contains('maximized');
+        
+        // If window is open (not minimized and not closed), minimize it
+        if (!isMinimized && !isClosed) {
+            terminalWindow.classList.add('minimized');
+            terminalApp.classList.remove('active');
+            
+            // Clear inline styles when minimizing (same as minimize button)
+            // Clear inline transform so CSS transition can work (important after dragging)
+            terminalWindow.style.opacity = '';
+            terminalWindow.style.pointerEvents = '';
+            terminalWindow.style.transform = '';
+            
+            // If maximized, keep maximized class but restore dock
+            if (isMaximized) {
+                const dock = document.querySelector('.dock');
+                if (dock) {
+                    dock.classList.remove('hidden');
+                }
+            }
+            return;
+        }
+        
+        // Otherwise, restore the window
+        // Check if window was maximized before minimizing
+        const wasMaximized = terminalWindow.classList.contains('maximized');
+        
+        // Remove closed and minimized classes
         terminalWindow.classList.remove('closed');
         terminalWindow.classList.remove('minimized');
+        
+        // If it was maximized, keep maximized class and hide dock
+        // Otherwise, remove maximized class and show dock
+        const dock = document.querySelector('.dock');
+        if (wasMaximized) {
+            // Keep maximized class, hide dock
+            if (dock) {
+                dock.classList.add('hidden');
+            }
+            terminalWindow.style.transform = 'none';
+        } else {
+            // Remove maximized class, show dock
+            terminalWindow.classList.remove('maximized');
+            if (dock) {
+                dock.classList.remove('hidden');
+            }
+            terminalWindow.style.transform = '';
+        }
+        
+        // Reset inline styles when restoring (same as minimize button)
+        terminalWindow.style.opacity = '';
+        terminalWindow.style.pointerEvents = '';
+        
+        // Mark as active in dock
         terminalApp.classList.add('active');
         
         // Focus input
@@ -1038,8 +1869,29 @@ function setupDock() {
     
     viewerApp.addEventListener('click', (e) => {
         e.stopPropagation();
+        
+        const isMinimized = viewerWindow.classList.contains('minimized');
+        const isClosed = viewerWindow.classList.contains('closed');
+        
+        // If window is open (not minimized and not closed), minimize it
+        if (!isMinimized && !isClosed) {
+            viewerWindow.classList.add('minimized');
+            viewerApp.classList.remove('active');
+            // Clear inline styles when minimizing (same as minimize button)
+            // Clear inline transform so CSS transition can work (important after dragging)
+            viewerWindow.style.opacity = '';
+            viewerWindow.style.pointerEvents = '';
+            viewerWindow.style.transform = '';
+            return;
+        }
+        
+        // Otherwise, restore the window
         viewerWindow.classList.remove('closed');
         viewerWindow.classList.remove('minimized');
+        // Reset inline styles when restoring (same as minimize button)
+        viewerWindow.style.opacity = '';
+        viewerWindow.style.pointerEvents = '';
+        viewerWindow.style.transform = '';
         viewerApp.classList.add('active');
     });
     
@@ -1049,13 +1901,42 @@ function setupDock() {
     
     audioApp.addEventListener('click', (e) => {
         e.stopPropagation();
+        
+        const isMinimized = audioWindow.classList.contains('minimized');
+        const isClosed = audioWindow.classList.contains('closed');
+        const isHidden = audioApp.style.display === 'none';
+        
+        // If window is open (not minimized, not closed, and app is visible), minimize it
+        if (!isMinimized && !isClosed && !isHidden) {
+            audioWindow.classList.add('minimized');
+            audioApp.classList.remove('active');
+            // Clear inline styles when minimizing
+            // Clear inline transform so CSS transition can work (important after dragging)
+            audioWindow.style.opacity = '';
+            audioWindow.style.pointerEvents = '';
+            audioWindow.style.transform = '';
+            return;
+        }
+        
+        // Otherwise, restore the window
         audioWindow.classList.remove('closed');
         audioWindow.classList.remove('minimized');
+        // Show the dock app if it was hidden
+        audioApp.style.display = '';
         // Restore pointer events
         audioWindow.style.pointerEvents = 'auto';
+        
+        // Set initial position if window hasn't been positioned yet (only on first open)
+        const existingTransform = window.getComputedStyle(audioWindow).transform;
+        if (!existingTransform || existingTransform === 'none' || existingTransform === 'matrix(1, 0, 0, 1, 0, 0)') {
+            // Position: vertically centered (50%), horizontally right of center (200px offset)
+            audioWindow.style.transform = 'translate(calc(-50% + 200px), -50%)';
+        }
+        
         // Apply opacity and theme
         applyAudioJunkieOpacity();
         applyAudioJunkieTheme();
+        applyAudioJunkieWindow();
         audioApp.classList.add('active');
     });
 }
@@ -1066,6 +1947,19 @@ function setupDock() {
 async function handleKeyDown(e) {
     if (e.key === 'Enter') {
         e.preventDefault();
+        
+        // Clear tab completion when executing command
+        if (lastTabCompletionLine && lastTabCompletionLine.parentNode) {
+            lastTabCompletionLine.remove();
+            lastTabCompletionLine = null;
+        }
+        
+        // Reset completion state
+        hasShownCompletions = false;
+        currentCompletions = [];
+        completionIndex = -1;
+        lastCompletionContext = null;
+        
         const command = input.value.trim();
         
         if (command) {
@@ -1073,8 +1967,8 @@ async function handleKeyDown(e) {
             commandHistory.push(command);
             historyIndex = commandHistory.length;
             
-            // Display command
-            addOutput(`<span class="prompt">${prompt.textContent}</span> ${escapeHtml(command)}`, 'input');
+            // Display command (use clean prompt text without steam animation)
+            addOutput(`<span class="prompt">${getCleanPromptText()}</span> ${escapeHtml(command)}`, 'input');
             
             // Check if waiting for JSON input
             if (waitingForJSONInput) {
@@ -1099,7 +1993,7 @@ async function handleKeyDown(e) {
                 addOutput('Error: JSON input expected. Paste your JSON config.', 'error');
                 addOutput('Or type any command to cancel.', 'info');
             } else {
-                addOutput(`<span class="prompt">${prompt.textContent}</span>`, 'input');
+                addOutput(`<span class="prompt">${getCleanPromptText()}</span>`, 'input');
             }
         }
         
@@ -1122,7 +2016,7 @@ async function handleKeyDown(e) {
         }
     } else if (e.key === 'Tab') {
         e.preventDefault();
-        handleTabCompletion();
+        handleTabCompletion(e.shiftKey);
     } else if (e.key === 'l' && e.ctrlKey) {
         e.preventDefault();
         clearScreen();
@@ -1133,31 +2027,461 @@ async function handleKeyDown(e) {
  * Handle input changes (for live features if needed)
  */
 function handleInput(e) {
-    // Could add live suggestions here
-}
-
-/**
- * Handle tab completion
- */
-function handleTabCompletion() {
-    const value = input.value;
-    const parts = value.split(' ');
-    const lastPart = parts[parts.length - 1];
+    // Reset completion state when user types (input changes)
+    hasShownCompletions = false;
+    currentCompletions = [];
+    completionIndex = -1;
+    lastCompletionContext = null;
     
-    const completions = fs.getCompletions(lastPart);
-    
-    if (completions.length === 1) {
-        parts[parts.length - 1] = completions[0];
-        input.value = parts.join(' ');
-    } else if (completions.length > 1) {
-        addOutput(completions.join('  '), 'info');
+    if (lastTabCompletionLine && lastTabCompletionLine.parentNode) {
+        lastTabCompletionLine.remove();
+        lastTabCompletionLine = null;
     }
 }
 
 /**
- * Execute a command
+ * Handle tab completion with cursor position support and cycling
+ */
+function handleTabCompletion(shiftKey = false) {
+    const value = input.value;
+    const cursorPos = input.selectionStart;
+    
+    // Get the word/part at cursor position
+    const context = getCompletionContext(value, cursorPos);
+    
+    // Create a context signature to identify if we're in the same completion slot
+    // This is based on command + partIndex (which layer we're completing)
+    const contextSignature = `${context.command}|${context.partIndex}`;
+    const lastSignature = lastCompletionContext ? 
+        `${lastCompletionContext.command}|${lastCompletionContext.partIndex}` : null;
+    
+    // Check if we're continuing from the same context (for cycling)
+    const isSameContext = contextSignature === lastSignature && currentCompletions.length > 0;
+    
+    // Get completions for current context
+    let completions = getCompletionsForContext(context);
+    
+    if (completions.length === 0) {
+        return; // No completions available
+    }
+    
+    // If same context, cycle through existing completions
+    if (isSameContext) {
+        // Cycle through completions
+        if (shiftKey) {
+            // Shift+Tab: go backwards
+            completionIndex = (completionIndex - 1 + currentCompletions.length) % currentCompletions.length;
+        } else {
+            // Tab: go forwards
+            completionIndex = (completionIndex + 1) % currentCompletions.length;
+        }
+        
+        const selectedCompletion = currentCompletions[completionIndex];
+        
+        // Use the stored partStart and partEnd from when we first started completing
+        // But we need to recalculate based on current input since the word may have changed
+        const currentValue = input.value;
+        
+        // Recalculate the part boundaries based on current input
+        const newContext = getCompletionContext(currentValue, input.selectionStart);
+        const replaceStart = newContext.partStart;
+        const replaceEnd = newContext.partEnd;
+        
+        // Replace the entire part (word) with the selected completion
+        const before = currentValue.substring(0, replaceStart);
+        const after = currentValue.substring(replaceEnd);
+        const newValue = before + selectedCompletion + after;
+        
+        input.value = newValue;
+        
+        // Set cursor position right after the completion (no space)
+        const newCursorPos = replaceStart + selectedCompletion.length;
+        input.setSelectionRange(newCursorPos, newCursorPos);
+        
+        return;
+    }
+    
+    // New context - reset and start fresh
+    currentCompletions = completions;
+    lastCompletionContext = {
+        command: context.command,
+        partIndex: context.partIndex,
+        contextSignature: contextSignature,
+        partStart: context.partStart,
+        partEnd: context.partEnd
+    };
+    
+    // Always cycle through completions (even if there's only one, in case more are added)
+    completionIndex = shiftKey ? completions.length - 1 : 0;
+    applyCompletion(context, completions[completionIndex]);
+}
+
+/**
+ * Get completion context (what we're trying to complete)
+ */
+function getCompletionContext(value, cursorPos) {
+    // Find which word/part the cursor is in
+    const parts = [];
+    let currentPart = '';
+    let currentPartStart = -1;
+    
+    // Parse the string into parts (words separated by whitespace)
+    for (let i = 0; i <= value.length; i++) {
+        const char = i < value.length ? value[i] : ' ';
+        const isWhitespace = /\s/.test(char);
+        
+        if (isWhitespace) {
+            if (currentPartStart !== -1) {
+                // End of word
+                parts.push({
+                    text: currentPart,
+                    start: currentPartStart,
+                    end: i
+                });
+                currentPart = '';
+                currentPartStart = -1;
+            }
+        } else {
+            if (currentPartStart === -1) {
+                // Start of new word
+                currentPartStart = i;
+            }
+            currentPart += char;
+        }
+    }
+    
+    // Find which part the cursor is in
+    let partIndex = -1;
+    let partStart = cursorPos;
+    let partEnd = cursorPos;
+    let part = '';
+    
+    // Check if cursor is in an existing part
+    for (let i = 0; i < parts.length; i++) {
+        if (cursorPos >= parts[i].start && cursorPos <= parts[i].end) {
+            partIndex = i;
+            partStart = parts[i].start;
+            partEnd = parts[i].end;
+            part = parts[i].text;
+            break;
+        }
+    }
+    
+    // If cursor is not in any part, it's after the last part (or at start)
+    if (partIndex === -1) {
+        // Find the last part before cursor
+        let lastPartBefore = -1;
+        for (let i = 0; i < parts.length; i++) {
+            if (parts[i].end <= cursorPos) {
+                lastPartBefore = i;
+            }
+        }
+        
+        // Cursor is after the last part (or at start with no parts)
+        partIndex = lastPartBefore + 1;
+        partStart = cursorPos;
+        partEnd = cursorPos;
+        part = '';
+    }
+    
+    const command = parts.length > 0 ? parts[0].text.toLowerCase() : '';
+    
+    return {
+        command,
+        parts,
+        partIndex,
+        part,
+        partStart,
+        partEnd,
+        cursorPos,
+        value
+    };
+}
+
+/**
+ * Get completions for a given context
+ */
+function getCompletionsForContext(context) {
+    const { command, part, partIndex, parts } = context;
+    
+    // Empty input - show all commands
+    if (partIndex === 0 && !part && parts.length === 0) {
+        return AVAILABLE_COMMANDS;
+    }
+    
+    // First word - complete command name
+    if (partIndex === 0) {
+        if (!part) {
+            return AVAILABLE_COMMANDS;
+        }
+        return AVAILABLE_COMMANDS.filter(cmd => cmd.startsWith(part.toLowerCase()));
+    }
+    
+    // Command-specific completions
+    if (command === 'config') {
+        return getConfigCompletions(context);
+    }
+    
+    // Commands that take file/directory paths
+    const pathCommands = ['cd', 'cat', 'open', 'close', 'ls', 'tree'];
+    if (pathCommands.includes(command)) {
+        return getPathCompletions(context);
+    }
+    
+    // Commands with flags/options
+    if (command === 'wormhole') {
+        return getWormholeCompletions(context);
+    }
+    
+    if (command === 'config' && part.startsWith('-')) {
+        return ['-d'].filter(flag => flag.startsWith(part));
+    }
+    
+    return [];
+}
+
+/**
+ * Get config command completions
+ */
+function getConfigCompletions(context) {
+    const { parts, partIndex, part } = context;
+    
+    // Check if we're completing a flag
+    if (part && part.startsWith('-')) {
+        return ['-d'].filter(flag => flag.startsWith(part));
+    }
+    
+    // config [tab] -> show categories and subcommands
+    if (partIndex === 1) {
+        if (!part) {
+            // Empty - show all categories and subcommands
+            return ['export', 'load', ...Object.keys(CONFIG_CATEGORIES)];
+        }
+        if (part.startsWith('-')) {
+            return ['-d'].filter(flag => flag.startsWith(part));
+        }
+        // Partial match - filter categories and subcommands
+        const allOptions = ['export', 'load', ...Object.keys(CONFIG_CATEGORIES)];
+        return allOptions.filter(opt => opt.startsWith(part.toLowerCase()));
+    }
+    
+    // Need to get the first part (category or subcommand) from parts[1]
+    const firstPart = parts[1];
+    if (!firstPart) {
+        return [];
+    }
+    
+    const firstPartText = firstPart.text?.toLowerCase() || '';
+    
+    // config export [tab] -> show flags
+    if (firstPartText === 'export' && partIndex === 2) {
+        if (!part) {
+            // Empty - show flags
+            return ['-d'];
+        }
+        if (part.startsWith('-')) {
+            return ['-d'].filter(flag => flag.startsWith(part));
+        }
+        return [];
+    }
+    
+    // config load [tab] -> no completions (takes JSON string)
+    if (firstPartText === 'load' && partIndex === 2) {
+        return [];
+    }
+    
+    // Handle categories (term, os, aj, dock)
+    const category = firstPartText;
+    const normalizedCategory = category === 'aj' ? 'audiojunkie' : category;
+    
+    // config <category> [tab] -> show settings for that category
+    if (partIndex === 2) {
+        if (!part) {
+            // Empty - show all settings for this category
+            if (CONFIG_CATEGORIES[normalizedCategory]) {
+                return ['-d', ...CONFIG_CATEGORIES[normalizedCategory]];
+            }
+            return ['-d'];
+        }
+        if (part.startsWith('-')) {
+            return ['-d'].filter(flag => flag.startsWith(part));
+        }
+        // Partial match - filter settings
+        if (CONFIG_CATEGORIES[normalizedCategory]) {
+            return CONFIG_CATEGORIES[normalizedCategory].filter(setting => 
+                setting.startsWith(part.toLowerCase())
+            );
+        }
+        return [];
+    }
+    
+    // config <category> <setting> [tab] -> show values (if applicable) or flags
+    if (partIndex === 3) {
+        const settingPart = parts[2];
+        if (!settingPart) {
+            return [];
+        }
+        
+        const setting = settingPart.text || '';
+        
+        if (part && part.startsWith('-')) {
+            return ['-d'].filter(flag => flag.startsWith(part));
+        }
+        
+        if (CONFIG_VALUES[setting]) {
+            const values = CONFIG_VALUES[setting];
+            if (values.length === 0) {
+                // No values to complete (e.g., opacity) - show flags
+                return !part ? ['-d'] : [];
+            }
+            if (!part) {
+                // Empty - show all values and flags
+                return ['-d', ...values];
+            }
+            // Partial match - filter values
+            return values.filter(val => val.startsWith(part.toLowerCase()));
+        }
+        return [];
+    }
+    
+    return [];
+}
+
+/**
+ * Get wormhole command completions
+ */
+function getWormholeCompletions(context) {
+    const { part, partIndex } = context;
+    
+    // wormhole [tab] -> show flags
+    if (partIndex === 1) {
+        if (!part) {
+            // Empty - show all flags
+            return ['-t'];
+        }
+        if (part.startsWith('-')) {
+            // Partial flag match
+            return ['-t'].filter(flag => flag.startsWith(part));
+        }
+        // If they typed something that doesn't start with -, no completions
+        return [];
+    }
+    
+    return [];
+}
+
+/**
+ * Get path completions for file/directory commands
+ */
+function getPathCompletions(context) {
+    const { part, parts, partIndex } = context;
+    const command = parts[0]?.text?.toLowerCase() || '';
+    
+    let completions = [];
+    
+    if (!part) {
+        // Show all files/directories in current directory
+        completions = fs.getCompletions('');
+    } else if (part.includes('/')) {
+        // Nested path
+        completions = fs.getPathCompletions(part);
+    } else {
+        // Simple completion for current directory
+        completions = fs.getCompletions(part);
+    }
+    
+    // For cd command, add trailing slash to directories
+    if (command === 'cd' && completions.length > 0) {
+        completions = completions.map(completion => {
+            if (!completion.endsWith('/') && !part.includes('/')) {
+                const isDir = fs.isDirectory(completion);
+                if (isDir) {
+                    return completion + '/';
+                }
+            }
+            return completion;
+        });
+    }
+    
+    return completions;
+}
+
+/**
+ * Apply completion to input at cursor position
+ */
+function applyCompletion(context, completion) {
+    const { partStart, partEnd, cursorPos, value } = context;
+    
+    // Build new value with completion inserted (NO automatic space)
+    const before = value.substring(0, partStart);
+    const after = value.substring(partEnd);
+    
+    // Just replace the part with completion, no space added
+    const newValue = before + completion + after;
+    
+    input.value = newValue;
+    
+    // Set cursor position right after the completion (no space)
+    const newCursorPos = partStart + completion.length;
+    input.setSelectionRange(newCursorPos, newCursorPos);
+}
+
+
+/**
+ * Show tab completion suggestions (replaces previous completion)
+ */
+function showTabCompletion(text) {
+    // Remove previous tab completion if exists
+    if (lastTabCompletionLine && lastTabCompletionLine.parentNode) {
+        lastTabCompletionLine.remove();
+    }
+    
+    // Add new completion line
+    const line = document.createElement('div');
+    line.className = 'output-line info tab-completion';
+    line.innerHTML = text;
+    output.appendChild(line);
+    lastTabCompletionLine = line;
+    
+    // Scroll to bottom
+    scrollToBottom();
+}
+
+
+/**
+ * Find common prefix of an array of strings
+ */
+function findCommonPrefix(strings) {
+    if (strings.length === 0) return '';
+    if (strings.length === 1) return strings[0];
+    
+    let prefix = strings[0];
+    for (let i = 1; i < strings.length; i++) {
+        while (!strings[i].startsWith(prefix)) {
+            prefix = prefix.slice(0, -1);
+            if (prefix === '') return '';
+        }
+    }
+    return prefix;
+}
+
+/**
+ * Execute a command (supports & chaining)
  */
 async function executeCommand(commandLine) {
+    // Check if command contains & for chaining
+    // Support both " & " (with spaces) and "&" (without spaces)
+    if (commandLine.includes('&')) {
+        // Split on & (with optional spaces around it)
+        const commands = commandLine.split(/\s*&\s*/).map(cmd => cmd.trim()).filter(cmd => cmd.length > 0);
+        
+        // Execute each command sequentially
+        for (const cmd of commands) {
+            await executeCommand(cmd);
+        }
+        return;
+    }
+    
     const parts = commandLine.trim().split(/\s+/);
     const command = parts[0].toLowerCase();
     const args = parts.slice(1);
@@ -1181,6 +2505,9 @@ async function executeCommand(commandLine) {
             break;
         case 'open':
             cmdOpen(args);
+            break;
+        case 'close':
+            cmdClose(args);
             break;
         case 'tree':
             cmdTree(args);
@@ -1248,6 +2575,7 @@ function cmdHelp() {
         <h4>📄 File Operations:</h4>
         <div class="command-item"><span class="cmd">cat</span> <span class="args">&lt;path/file&gt;</span> - Display file contents</div>
         <div class="command-item"><span class="cmd">open</span> <span class="args">&lt;path/file&gt;</span> - Open PDFs, images, and audio files</div>
+        <div class="command-item"><span class="cmd">close</span> <span class="args">&lt;path/file&gt;</span> - Close opened files (PDFs, images, audio)</div>
     </div>
 
     <div class="command-group">
@@ -1304,11 +2632,61 @@ function cmdLs(args) {
         const icon = isDir ? '📁' : '📄';
         const className = isDir ? 'directory' : 'file';
         const hidden = item.startsWith('.') ? ' hidden' : '';
-        output += `<span class="${className}${hidden}">${icon} ${escapeHtml(item)}</span>`;
+        
+        // Determine file type for click handling
+        let fileType = 'directory';
+        if (!isDir) {
+            const fileContent = fs.getFile(item);
+            if (fileContent && (fileContent.startsWith('portfolio-source/') || fileContent.startsWith('media/'))) {
+                fileType = 'media';
+            } else {
+                fileType = 'text';
+            }
+        }
+        
+        // Add clickable attribute and data attributes
+        output += `<span class="${className}${hidden} clickable-item" data-item="${escapeHtml(item)}" data-type="${fileType}">${icon} ${escapeHtml(item)}</span>`;
     });
     output += '</div>';
     
     addOutput(output, 'success');
+    
+    // Add click handlers to the newly added items
+    setTimeout(() => {
+        const outputLines = document.querySelectorAll('.output-line:last-child .clickable-item');
+        outputLines.forEach(span => {
+            span.style.cursor = 'pointer';
+            span.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const itemName = span.dataset.item;
+                const itemType = span.dataset.type;
+                
+                let command = '';
+                if (itemType === 'directory') {
+                    command = `cd ${itemName} & ls`;
+                } else if (itemType === 'text') {
+                    command = `cat ${itemName}`;
+                } else if (itemType === 'media') {
+                    command = `open ${itemName}`;
+                }
+                
+                if (command) {
+                    // Display the command as if user typed it
+                    addOutput(`<span class="prompt">${getCleanPromptText()}</span> ${escapeHtml(command)}`, 'input');
+                    
+                    // Add to history
+                    commandHistory.push(command);
+                    historyIndex = commandHistory.length;
+                    
+                    // Execute the command (supports & chaining)
+                    await executeCommand(command);
+                    
+                    // Clear input
+                    input.value = '';
+                }
+            });
+        });
+    }, 0);
 }
 
 /**
@@ -1487,6 +2865,66 @@ function cmdOpen(args) {
 }
 
 /**
+ * Command: close
+ * Closes windows opened via the open command
+ */
+function cmdClose(args) {
+    if (args.length === 0) {
+        addOutput('close: missing file operand', 'error');
+        addOutput('Usage: close &lt;filename&gt;', 'info');
+        addOutput('Example: close resume.pdf or close Media/lofi.mp3', 'info');
+        return;
+    }
+
+    const filepath = args[0];
+    const result = resolveFilePath(filepath);
+    
+    if (!result.success) {
+        addOutput(`close: ${escapeHtml(filepath)}: ${result.error}`, 'error');
+        return;
+    }
+
+    const { content, filename } = result;
+    
+    // Check if file is currently open in viewer
+    if (openViewerFile === content) {
+        const viewerWindow = document.getElementById('viewer-window');
+        const viewerApp = document.getElementById('viewer-app');
+        
+        viewerWindow.classList.add('closed');
+        viewerApp.style.display = 'none';
+        viewerApp.classList.remove('active');
+        openViewerFile = null;
+        
+        addOutput(`✓ Closed ${escapeHtml(filename)} in viewer`, 'success');
+        return;
+    }
+    
+    // Check if file is currently open in audio player
+    if (openAudioFile === content) {
+        const audioWindow = document.getElementById('audio-window');
+        const audioApp = document.getElementById('audio-app');
+        const audioPlayer = document.getElementById('audio-player');
+        
+        // Stop audio
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+        
+        audioWindow.classList.add('closed');
+        audioApp.style.display = 'none';
+        audioApp.classList.remove('active');
+        openAudioFile = null;
+        
+        addOutput(`✓ Closed ${escapeHtml(filename)} in Audio Junkie`, 'success');
+        return;
+    }
+    
+    // File is not currently open
+    addOutput(`close: ${escapeHtml(filename)}: File is not currently open`, 'error');
+    addOutput('Use <span class="cmd">open</span> to open files first', 'info');
+}
+
+/**
  * Open file in viewer window
  */
 function openInViewer(filePath, fileName, fileType) {
@@ -1495,6 +2933,9 @@ function openInViewer(filePath, fileName, fileType) {
     const viewerIframe = document.getElementById('viewer-iframe');
     const viewerImage = document.getElementById('viewer-image');
     const viewerApp = document.getElementById('viewer-app');
+    
+    // Track the open file
+    openViewerFile = filePath;
     
     // Update title
     viewerTitle.textContent = fileName;
@@ -1529,9 +2970,27 @@ function openInAudioPlayer(filePath, fileName) {
     const songNameEl = document.getElementById('song-name');
     const playPauseBtn = document.getElementById('play-pause-btn');
     
+    // Track the open file
+    openAudioFile = filePath;
+    
     // Update song name (remove extension)
     const displayName = fileName.replace(/\.[^/.]+$/, "");
     songNameEl.textContent = displayName;
+    
+    // Reset border progress bar (for circle window)
+    if (audioWindow && audioWindow.classList.contains('window-circle')) {
+        const borderProgressFill = document.getElementById('border-progress-fill');
+        if (borderProgressFill) {
+            const circumference = 2 * Math.PI * 45;
+            borderProgressFill.style.strokeDashoffset = circumference;
+        }
+    }
+    
+    // Reset linear progress bar
+    const progressFill = document.getElementById('progress-fill');
+    if (progressFill) {
+        progressFill.style.width = '0%';
+    }
     
     // Load audio file
     audioPlayer.src = filePath;
@@ -1551,9 +3010,18 @@ function openInAudioPlayer(filePath, fileName) {
     // Restore pointer events and positioning
     audioWindow.style.pointerEvents = 'auto';
     
-    // Apply opacity and theme
+    // Set initial position: vertically centered, horizontally to the right of center
+    // Only set if window doesn't already have a transform (hasn't been dragged)
+    const existingTransform = window.getComputedStyle(audioWindow).transform;
+    if (!existingTransform || existingTransform === 'none' || existingTransform === 'matrix(1, 0, 0, 1, 0, 0)') {
+        // Position: vertically centered (50%), horizontally right of center (200px offset)
+        audioWindow.style.transform = 'translate(calc(-50% + 200px), -50%)';
+    }
+    
+    // Apply opacity, theme, and window style
     applyAudioJunkieOpacity();
     applyAudioJunkieTheme();
+    applyAudioJunkieWindow();
     
     // Show audio app in dock
     audioApp.style.display = 'flex';
@@ -1688,6 +3156,7 @@ async function resetCategoryToDefaults(category) {
     if (category === 'term') {
         termConfig.banner_name = 'name1.html';
         termConfig.banner_image = 'bimage1.html';
+        termConfig.avatar = 'dancer.html';
         termConfig.opacity = 100;
         termConfig.theme = 'earth';
         termConfig.quote = 'asimov';
@@ -1706,14 +3175,17 @@ async function resetCategoryToDefaults(category) {
         audioJunkieConfig.opacity = 100;
         audioJunkieConfig.theme = 'earth';
         audioJunkieConfig.visualizer = 'linear';
+        audioJunkieConfig.window = 'box';
         applyAudioJunkieOpacity();
         applyAudioJunkieTheme();
+        applyAudioJunkieWindow();
         updateAudioJunkieFile();
         
         addOutput(`✓ Audio Junkie settings reset to defaults`, 'success');
         addOutput(`  opacity=100`, 'info');
         addOutput(`  theme=earth`, 'info');
         addOutput(`  visualizer=linear`, 'info');
+        addOutput(`  window=box`, 'info');
     } else if (category === 'dock') {
         dockConfig.opacity = 100;
         dockConfig.theme = 'earth';
@@ -1752,6 +3224,11 @@ async function resetSettingToDefault(category, setting) {
             await renderBanner();
             updateTermFile();
             addOutput(`✓ banner_image reset to default: bimage1.html`, 'success');
+        } else if (setting === 'avatar') {
+            termConfig.avatar = 'dancer.html';
+            await renderBanner();
+            updateTermFile();
+            addOutput(`✓ avatar reset to default: dancer.html`, 'success');
         } else if (setting === 'opacity') {
             termConfig.opacity = 100;
             applyOpacity();
@@ -1771,7 +3248,7 @@ async function resetSettingToDefault(category, setting) {
             addOutput(`✓ quote reset to default: asimov`, 'success');
         } else {
             addOutput(`Error: Unknown terminal setting '${escapeHtml(setting)}'`, 'error');
-            addOutput('Available settings: banner_name, banner_image, opacity, theme, quote', 'info');
+            addOutput('Available settings: banner_name, banner_image, avatar, opacity, theme, quote', 'info');
         }
     } else if (category === 'audiojunkie') {
         if (setting === 'opacity') {
@@ -1789,9 +3266,14 @@ async function resetSettingToDefault(category, setting) {
             updateAudioJunkieFile();
             addOutput(`✓ visualizer reset to default: linear`, 'success');
             addOutput(`Note: Restart audio playback to see the change`, 'info');
+        } else if (setting === 'window') {
+            audioJunkieConfig.window = 'box';
+            applyAudioJunkieWindow();
+            updateAudioJunkieFile();
+            addOutput(`✓ window reset to default: box`, 'success');
         } else {
             addOutput(`Error: Unknown Audio Junkie setting '${escapeHtml(setting)}'`, 'error');
-            addOutput('Available settings: opacity, theme, visualizer', 'info');
+            addOutput('Available settings: opacity, theme, visualizer, window', 'info');
         }
     } else if (category === 'dock') {
         if (setting === 'opacity') {
@@ -1854,7 +3336,7 @@ async function cmdConfig(args) {
     <div class="command-group">
         <h4>Categories:</h4>
         <div class="command-item"><span class="cmd">term</span> - Terminal settings (banner_name, banner_image, opacity, theme, quote)</div>
-        <div class="command-item"><span class="cmd">audiojunkie</span> (or <span class="cmd">aj</span>) - Audio Junkie settings (opacity, theme, visualizer)</div>
+        <div class="command-item"><span class="cmd">audiojunkie</span> (or <span class="cmd">aj</span>) - Audio Junkie settings (opacity, theme, visualizer, window)</div>
         <div class="command-item"><span class="cmd">dock</span> - Dock settings (opacity, theme)</div>
         <div class="command-item"><span class="cmd">os</span> - OS-wide settings (bg_img, theme) - affects all components</div>
     </div>
@@ -1869,13 +3351,13 @@ async function cmdConfig(args) {
         <div class="command-item"><span class="cmd">config audiojunkie opacity 80</span> (or <span class="cmd">config aj opacity 80</span>) - Set Audio Junkie to 80% opacity</div>
         <div class="command-item"><span class="cmd">config audiojunkie theme water</span> (or <span class="cmd">config aj theme water</span>) - Switch to water theme (blue/purple/pink)</div>
         <div class="command-item"><span class="cmd">config audiojunkie visualizer pulse</span> (or <span class="cmd">config aj visualizer pulse</span>) - Switch to pulse visualizer (heart monitor style)</div>
+        <div class="command-item"><span class="cmd">config audiojunkie window circle</span> (or <span class="cmd">config aj window circle</span>) - Switch to circular window style</div>
         <div class="command-item"><span class="cmd">config dock theme water</span> - Switch dock to water theme</div>
         <div class="command-item"><span class="cmd">config dock opacity 75</span> - Set dock to 75% opacity</div>
         <div class="command-item"><span class="cmd">config os bg_img sky</span> - Change background image to sky</div>
         <div class="command-item"><span class="cmd">config os theme water</span> - Set all components to water theme</div>
         <div class="command-item"><span class="cmd">config term -d</span> - Reset all terminal settings to defaults</div>
         <div class="command-item"><span class="cmd">config term theme -d</span> - Reset terminal theme to default</div>
-        <div class="command-item"><span class="cmd">ls themes</span> - View all available themes</div>
         <div class="command-item"><span class="cmd">cat .term</span> - View terminal config file</div>
         <div class="command-item"><span class="cmd">cat .audiojunkie</span> - View Audio Junkie config file</div>
         <div class="command-item"><span class="cmd">cat .dock</span> - View dock config file</div>
@@ -1884,9 +3366,8 @@ async function cmdConfig(args) {
     <div class="command-group">
         <h4>💡 Tips:</h4>
         <div class="command-item">• Changes are temporary (session only)</div>
-        <div class="command-item">• Edit <span class="cmd">portfolio-source/.term</span> for permanent changes</div>
-        <div class="command-item">• Add custom themes to <span class="cmd">portfolio-source/themes/</span></div>
-        <div class="command-item">• Run <span class="cmd">python3 generate_fs.py</span> after adding themes</div>
+        <div class="command-item">• Use <span class="cmd">config export</span> or <span class="cmd">config export -d</span> to save your personal arminOS config JSON</div>
+        <div class="command-item">• Then you can use <span class="cmd">wormhole</span> to drag JSON file in or just copy paste with <span class="cmd">wormhole -t</span></div>
     </div>
 </div>
         `;
@@ -1897,48 +3378,54 @@ async function cmdConfig(args) {
     if (args.length === 0) {
         // Show current configuration
         const configInfo = `
-<div class="config-section">
-    <h3>Terminal Theme Configuration</h3>
-    <p>Current settings from <code>~/.term</code>:</p>
+<div class="help-section">
+    <p>Use <span class="cmd">ls -a</span> then <span class="cmd">cat</span> to open configuration files</p>
     <br>
-    <div class="config-item"><span class="cmd">banner_name</span> = ${termConfig.banner_name}</div>
-    <div class="config-item"><span class="cmd">banner_image</span> = ${termConfig.banner_image}</div>
-    <div class="config-item"><span class="cmd">opacity</span> = ${termConfig.opacity}</div>
-    <div class="config-item"><span class="cmd">theme</span> = ${termConfig.theme}</div>
-    <div class="config-item"><span class="cmd">quote</span> = ${termConfig.quote}</div>
-    <br>
-    <p><strong>Audio Junkie Settings:</strong></p>
-    <div class="config-item"><span class="cmd">opacity</span> = ${audioJunkieConfig.opacity}</div>
-    <div class="config-item"><span class="cmd">theme</span> = ${audioJunkieConfig.theme}</div>
-    <div class="config-item"><span class="cmd">visualizer</span> = ${audioJunkieConfig.visualizer}</div>
-    <br>
-    <p><strong>Dock Settings:</strong></p>
-    <div class="config-item"><span class="cmd">opacity</span> = ${dockConfig.opacity}</div>
-    <div class="config-item"><span class="cmd">theme</span> = ${dockConfig.theme}</div>
-    <br>
-    <p><strong>OS Settings:</strong></p>
-    <div class="config-item"><span class="cmd">bg_img</span> = ${arminOSConfig.bg_img}</div>
-    <div class="config-item"><span class="cmd">theme</span> = ${arminOSConfig.theme}</div>
-    <br>
-    <p>Quick commands:</p>
-    <div class="command-item"><span class="cmd">config term banner_name &lt;file.html&gt;</span> - Change ASCII name banner</div>
-    <div class="command-item"><span class="cmd">config term banner_image &lt;file.html&gt;</span> - Change scene/image banner</div>
-    <div class="command-item"><span class="cmd">config term opacity &lt;0-100&gt;</span> - Change terminal opacity</div>
-    <div class="command-item"><span class="cmd">config term theme &lt;earth|water&gt;</span> - Change terminal theme</div>
-    <div class="command-item"><span class="cmd">config term quote &lt;asimov|watts&gt;</span> - Change quote display</div>
-    <div class="command-item"><span class="cmd">config audiojunkie opacity &lt;0-100&gt;</span> (or <span class="cmd">config aj opacity &lt;0-100&gt;</span>) - Change Audio Junkie opacity</div>
-    <div class="command-item"><span class="cmd">config audiojunkie theme &lt;earth|water&gt;</span> (or <span class="cmd">config aj theme &lt;earth|water&gt;</span>) - Change Audio Junkie theme</div>
-    <div class="command-item"><span class="cmd">config audiojunkie visualizer &lt;linear|pulse&gt;</span> (or <span class="cmd">config aj visualizer &lt;linear|pulse&gt;</span>) - Change visualizer style</div>
-    <div class="command-item"><span class="cmd">config dock opacity &lt;0-100&gt;</span> - Change dock opacity</div>
-    <div class="command-item"><span class="cmd">config dock theme &lt;earth|water&gt;</span> - Change dock theme</div>
-    <div class="command-item"><span class="cmd">config os bg_img &lt;core|sky&gt;</span> - Change background image</div>
-    <div class="command-item"><span class="cmd">config os theme &lt;earth|water&gt;</span> - Set all components to theme</div>
-    <div class="command-item"><span class="cmd">config &lt;category&gt; -d</span> - Reset category to defaults</div>
-    <div class="command-item"><span class="cmd">config &lt;category&gt; &lt;setting&gt; -d</span> - Reset setting to default</div>
-    <div class="command-item"><span class="cmd">ls themes</span> - View available themes</div>
-    <div class="command-item"><span class="cmd">config -help</span> - Detailed guide</div>
-    <br>
-    <p>Note: Changes are temporary. Edit <code>~/.term</code>, <code>~/.audiojunkie</code>, or <code>~/.dock</code> to make them permanent.</p>
+    
+    <div class="command-group">
+        <h4>📝 .term (Terminal Settings):</h4>
+        <div class="command-item"><span class="cmd">config term banner_name &lt;file.html&gt;</span> - Change ASCII name banner</div>
+        <div class="command-item"><span class="cmd">config term banner_image &lt;file.html&gt;</span> - Change scene/image banner</div>
+        <div class="command-item"><span class="cmd">config term opacity &lt;0-100&gt;</span> - Change terminal opacity</div>
+        <div class="command-item"><span class="cmd">config term theme &lt;earth|water&gt;</span> - Change terminal theme</div>
+        <div class="command-item"><span class="cmd">config term quote &lt;asimov|watts&gt;</span> - Change quote display</div>
+        <div class="command-item"><span class="cmd">config term -d</span> - Reset all terminal settings to defaults</div>
+        <div class="command-item"><span class="cmd">config term &lt;setting&gt; -d</span> - Reset specific setting to default</div>
+    </div>
+
+    <div class="command-group">
+        <h4>🎵 .audiojunkie (Audio Junkie Settings):</h4>
+        <div class="command-item"><span class="cmd">config audiojunkie opacity &lt;0-100&gt;</span> (or <span class="cmd">config aj opacity &lt;0-100&gt;</span>) - Change Audio Junkie opacity</div>
+        <div class="command-item"><span class="cmd">config audiojunkie theme &lt;earth|water&gt;</span> (or <span class="cmd">config aj theme &lt;earth|water&gt;</span>) - Change Audio Junkie theme</div>
+        <div class="command-item"><span class="cmd">config audiojunkie visualizer &lt;linear|pulse&gt;</span> (or <span class="cmd">config aj visualizer &lt;linear|pulse&gt;</span>) - Change visualizer style</div>
+        <div class="command-item"><span class="cmd">config audiojunkie window &lt;box|circle&gt;</span> (or <span class="cmd">config aj window &lt;box|circle&gt;</span>) - Change window style (box or circle)</div>
+        <div class="command-item"><span class="cmd">config audiojunkie -d</span> (or <span class="cmd">config aj -d</span>) - Reset all Audio Junkie settings to defaults</div>
+        <div class="command-item"><span class="cmd">config audiojunkie &lt;setting&gt; -d</span> - Reset specific setting to default</div>
+    </div>
+
+    <div class="command-group">
+        <h4>📱 .dock (Dock Settings):</h4>
+        <div class="command-item"><span class="cmd">config dock opacity &lt;0-100&gt;</span> - Change dock opacity</div>
+        <div class="command-item"><span class="cmd">config dock theme &lt;earth|water&gt;</span> - Change dock theme</div>
+        <div class="command-item"><span class="cmd">config dock -d</span> - Reset all dock settings to defaults</div>
+        <div class="command-item"><span class="cmd">config dock &lt;setting&gt; -d</span> - Reset specific setting to default</div>
+    </div>
+
+    <div class="command-group">
+        <h4>🖥️ .arminOS (OS Settings):</h4>
+        <div class="command-item"><span class="cmd">config os bg_img &lt;core|sky&gt;</span> - Change background image</div>
+        <div class="command-item"><span class="cmd">config os theme &lt;earth|water&gt;</span> - Set all components to theme</div>
+        <div class="command-item"><span class="cmd">config os -d</span> - Reset all OS settings to defaults</div>
+        <div class="command-item"><span class="cmd">config os &lt;setting&gt; -d</span> - Reset specific setting to default</div>
+    </div>
+
+    <div class="command-group">
+        <h4>💾 Config Management:</h4>
+        <div class="command-item"><span class="cmd">config export</span> - Export current config as JSON (display)</div>
+        <div class="command-item"><span class="cmd">config export -d</span> - Export and download config as JSON file</div>
+        <div class="command-item"><span class="cmd">config load &lt;json&gt;</span> - Load config from JSON string</div>
+        <div class="command-item"><span class="cmd">config -help</span> - Detailed guide</div>
+    </div>
 </div>
         `;
         addOutput(configInfo, 'info');
@@ -2060,7 +3547,6 @@ async function cmdConfig(args) {
             const themeContent = await loadThemeFile(value);
             if (!themeContent) {
                 addOutput(`Error: Theme file '${escapeHtml(value)}' not found in themes folder`, 'error');
-                addOutput('Use <span class="cmd">ls themes</span> to see available themes', 'info');
                 return;
             }
             
@@ -2079,7 +3565,6 @@ async function cmdConfig(args) {
             const themeContent = await loadThemeFile(value);
             if (!themeContent) {
                 addOutput(`Error: Theme file '${escapeHtml(value)}' not found in themes folder`, 'error');
-                addOutput('Use <span class="cmd">ls themes</span> to see available themes', 'info');
                 return;
             }
             
@@ -2090,6 +3575,24 @@ async function cmdConfig(args) {
             addOutput(`✓ banner_image changed to ${escapeHtml(value)}`, 'success');
             addOutput(`To make this permanent, edit <code>~/.term</code> and change:`, 'info');
             addOutput(`  banner_image=${value}`, 'info');
+            return;
+        }
+        
+        if (setting === 'avatar') {
+            // Check if theme file exists
+            const themeContent = await loadThemeFile(value);
+            if (!themeContent) {
+                addOutput(`Error: Theme file '${escapeHtml(value)}' not found in themes folder`, 'error');
+                return;
+            }
+            
+            termConfig.avatar = value;
+            await renderBanner();
+            updateTermFile();
+            
+            addOutput(`✓ avatar changed to ${escapeHtml(value)}`, 'success');
+            addOutput(`To make this permanent, edit <code>~/.term</code> and change:`, 'info');
+            addOutput(`  avatar=${value}`, 'info');
             return;
         }
         
@@ -2148,7 +3651,7 @@ async function cmdConfig(args) {
         }
         
         addOutput(`Error: Unknown terminal setting '${escapeHtml(setting)}'`, 'error');
-        addOutput('Available settings: banner_name, banner_image, opacity, theme, quote', 'info');
+        addOutput('Available settings: banner_name, banner_image, avatar, opacity, theme, quote', 'info');
         return;
     }
     
@@ -2205,8 +3708,25 @@ async function cmdConfig(args) {
             return;
         }
         
+        if (setting === 'window') {
+            const validWindows = ['box', 'circle'];
+            if (!validWindows.includes(value.toLowerCase())) {
+                addOutput(`Error: Window must be one of: ${validWindows.join(', ')}`, 'error');
+                return;
+            }
+            
+            audioJunkieConfig.window = value.toLowerCase();
+            applyAudioJunkieWindow();
+            updateAudioJunkieFile();
+            
+            addOutput(`✓ Audio Junkie window changed to ${escapeHtml(value.toLowerCase())}`, 'success');
+            addOutput(`To make this permanent, edit <code>~/.audiojunkie</code> and change:`, 'info');
+            addOutput(`  window=${value.toLowerCase()}`, 'info');
+            return;
+        }
+        
         addOutput(`Error: Unknown Audio Junkie setting '${escapeHtml(setting)}'`, 'error');
-        addOutput('Available settings: opacity, theme, visualizer', 'info');
+        addOutput('Available settings: opacity, theme, visualizer, window', 'info');
         return;
     }
     
@@ -2328,6 +3848,7 @@ function exportConfigToJSON() {
         term: {
             banner_name: termConfig.banner_name,
             banner_image: termConfig.banner_image,
+            avatar: termConfig.avatar || 'dancer.html',
             opacity: termConfig.opacity,
             theme: termConfig.theme,
             quote: termConfig.quote
@@ -2335,7 +3856,8 @@ function exportConfigToJSON() {
         audiojunkie: {
             opacity: audioJunkieConfig.opacity,
             theme: audioJunkieConfig.theme,
-            visualizer: audioJunkieConfig.visualizer
+            visualizer: audioJunkieConfig.visualizer,
+            window: audioJunkieConfig.window
         },
         dock: {
             opacity: dockConfig.opacity,
@@ -2363,6 +3885,7 @@ async function loadConfigFromJSON(configObj) {
         if (configObj.term) {
             if (configObj.term.banner_name) termConfig.banner_name = configObj.term.banner_name;
             if (configObj.term.banner_image) termConfig.banner_image = configObj.term.banner_image;
+            if (configObj.term.avatar) termConfig.avatar = configObj.term.avatar;
             if (configObj.term.opacity !== undefined) termConfig.opacity = parseInt(configObj.term.opacity) || 100;
             if (configObj.term.theme) termConfig.theme = configObj.term.theme;
             if (configObj.term.quote) termConfig.quote = configObj.term.quote;
@@ -2373,6 +3896,12 @@ async function loadConfigFromJSON(configObj) {
             if (configObj.audiojunkie.opacity !== undefined) audioJunkieConfig.opacity = parseInt(configObj.audiojunkie.opacity) || 100;
             if (configObj.audiojunkie.theme) audioJunkieConfig.theme = configObj.audiojunkie.theme;
             if (configObj.audiojunkie.visualizer) audioJunkieConfig.visualizer = configObj.audiojunkie.visualizer;
+            if (configObj.audiojunkie.window) audioJunkieConfig.window = configObj.audiojunkie.window;
+        }
+        
+        // Apply Audio Junkie window style after loading
+        if (configObj.audiojunkie) {
+            applyAudioJunkieWindow();
         }
         
         // Load dock config
@@ -2569,7 +4098,7 @@ function cmdBclear(args) {
  * Update .term file content in filesystem (session only)
  */
 function updateTermFile() {
-    const termContent = `banner_name=${termConfig.banner_name}\nbanner_image=${termConfig.banner_image}\nopacity=${termConfig.opacity}\ntheme=${termConfig.theme}\nquote=${termConfig.quote}\n`;
+    const termContent = `banner_name=${termConfig.banner_name}\nbanner_image=${termConfig.banner_image}\navatar=${termConfig.avatar || 'dancer.html'}\nopacity=${termConfig.opacity}\ntheme=${termConfig.theme}\nquote=${termConfig.quote}\n`;
     
     // Update the .term file at root level
     if (fs.root && fs.root['.term'] !== undefined) {
@@ -2581,7 +4110,7 @@ function updateTermFile() {
  * Update .audiojunkie file content in filesystem (session only)
  */
 function updateAudioJunkieFile() {
-    const audioJunkieContent = `opacity=${audioJunkieConfig.opacity}\ntheme=${audioJunkieConfig.theme}\nvisualizer=${audioJunkieConfig.visualizer}\n`;
+    const audioJunkieContent = `opacity=${audioJunkieConfig.opacity}\ntheme=${audioJunkieConfig.theme}\nvisualizer=${audioJunkieConfig.visualizer}\nwindow=${audioJunkieConfig.window}\n`;
     
     // Update the .audiojunkie file at root level
     if (fs.root && fs.root['.audiojunkie'] !== undefined) {
@@ -2645,6 +4174,22 @@ function addOutput(text, type = 'default') {
 }
 
 /**
+ * Get clean prompt text (without steam animation for display)
+ */
+function getCleanPromptText() {
+    const path = fs.getCurrentPathString() || '~';
+    const displayPath = path === '/' ? '~' : '~' + path;
+    const theme = termConfig.theme || 'earth';
+    
+    // Return clean text without steam animation
+    if (theme === 'water') {
+        return `<><(((◦>:${displayPath} armin$`;
+    } else {
+        return `C|_|:${displayPath} armin$`;
+    }
+}
+
+/**
  * Update prompt with current directory
  */
 function updatePrompt() {
@@ -2654,9 +4199,9 @@ function updatePrompt() {
     
     // Use fish icon for water theme, coffee mug for earth theme
     if (theme === 'water') {
-        prompt.innerHTML = `<span class="fish-icon">><((((('></span>:${displayPath} armin$`;
+        prompt.innerHTML = `<span class="fish-icon"><><(((◦></span>:${displayPath} armin$`;
     } else {
-        prompt.innerHTML = `<span class="coffee-mug">C|_|</span>:${displayPath} armin$`;
+        prompt.innerHTML = `<span class="coffee-container"><span class="coffee-steam"><span class="steam-1">°</span><span class="steam-2">~</span><span class="steam-3">°</span></span><span class="coffee-mug">C|_|</span></span>:${displayPath} armin$`;
     }
 }
 

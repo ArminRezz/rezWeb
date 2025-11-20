@@ -1,12 +1,18 @@
 Hi! I'm Armin Rezaiyan
 
 I'm a software engineer and developer passionate about building innovative solutions.
-With expertise in full-stack development, machine learning, and system design, 
+With expertise in full-stack development, machine learning, and architecting AI systems.
 I love creating projects that solve real-world problems.
 
 Currently exploring:
-- Web development with React and modern JavaScript
-- Terminal-based user interfaces
-- Creative portfolio designs
+- Deploying Agentic AI 
+- Getting better at Python and C++
 
-Feel free to explore my projects and get in touch!
+Feel free to explore my projects on github and get in touch!
+
+P.S. 
+
+My recommendations for exploring terminal:
+Explore Audio Junkie.
+Explore the config command.
+Explore config export and wormhole command to create your own custom theme config.

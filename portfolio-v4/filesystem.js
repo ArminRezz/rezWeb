@@ -273,11 +273,74 @@ class FileSystem {
     }
 
     /**
-     * Get autocomplete suggestions
+     * Get autocomplete suggestions for current directory
      */
     getCompletions(partial) {
         const items = this.list(true);
         return items.filter(item => item.startsWith(partial));
+    }
+
+    /**
+     * Get autocomplete suggestions for a path (handles nested directories)
+     * @param {string} path - Partial path to complete (e.g., "Media/lo" or "Documents/")
+     * @returns {Array} - Array of completion strings
+     */
+    getPathCompletions(path) {
+        if (!path) {
+            return this.list(true);
+        }
+
+        // Handle absolute paths
+        if (path.startsWith('/')) {
+            const parts = path.substring(1).split('/').filter(p => p);
+            const dirPath = parts.slice(0, -1);
+            const partial = parts[parts.length - 1] || '';
+            
+            const dir = this.getDirectoryAtPath(dirPath);
+            if (!dir || typeof dir !== 'object') {
+                return [];
+            }
+            
+            const items = Object.keys(dir).filter(item => item.startsWith(partial));
+            return items.map(item => {
+                const fullPath = '/' + [...dirPath, item].join('/');
+                const isDir = typeof dir[item] === 'object';
+                return isDir ? fullPath + '/' : fullPath;
+            });
+        }
+
+        // Handle relative paths
+        const parts = path.split('/');
+        const dirPath = parts.slice(0, -1);
+        const partial = parts[parts.length - 1] || '';
+
+        // Navigate to the target directory
+        let targetDir = this.getCurrentDir();
+        if (dirPath.length > 0) {
+            const tempPath = [...this.currentPath];
+            for (const dir of dirPath) {
+                if (dir === '..') {
+                    if (tempPath.length > 0) {
+                        tempPath.pop();
+                    }
+                } else if (dir !== '.' && dir !== '') {
+                    tempPath.push(dir);
+                }
+            }
+            targetDir = this.getDirectoryAtPath(tempPath);
+        }
+
+        if (!targetDir || typeof targetDir !== 'object') {
+            return [];
+        }
+
+        const items = Object.keys(targetDir).filter(item => item.startsWith(partial));
+        return items.map(item => {
+            const prefix = dirPath.length > 0 ? dirPath.join('/') + '/' : '';
+            const fullPath = prefix + item;
+            const isDir = typeof targetDir[item] === 'object';
+            return isDir ? fullPath + '/' : fullPath;
+        });
     }
 }
 
