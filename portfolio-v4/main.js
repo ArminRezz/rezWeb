@@ -3131,22 +3131,16 @@ function cmdHistory() {
  * Command: about
  */
 function cmdAbout() {
-    const aboutText = `
-<div class="about-section">
-    <h3>About This Portfolio</h3>
-    <p>This is an interactive terminal-based portfolio website built with:</p>
-    <ul>
-        <li>📦 <strong>Modular Design:</strong> Content loaded from JSON filesystem</li>
-        <li>🐍 <strong>Python Generator:</strong> Automatic JSON generation from source files</li>
-        <li>⚡ <strong>Pure Frontend:</strong> No backend required - runs entirely in browser</li>
-        <li>🎨 <strong>Terminal UI:</strong> Authentic command-line experience</li>
-    </ul>
-    <p>To update content: Edit files in <code>portfolio-source/</code> and run <code>python generate_fs.py</code></p>
-    <br>
-    <p>Explore the filesystem with <code>ls</code>, <code>cd</code>, and <code>cat</code> commands!</p>
-</div>
-    `;
-    addOutput(aboutText, 'info');
+    // Load about.txt from the filesystem using path resolution
+    const result = resolveFilePath('Documents/about.txt');
+    
+    if (result.success) {
+        // Display the content from about.txt
+        addOutput(`<pre class="file-content">${escapeHtml(result.content)}</pre>`, 'success');
+    } else {
+        // Fallback if file not found
+        addOutput(`about: ${result.error}`, 'error');
+    }
 }
 
 /**
