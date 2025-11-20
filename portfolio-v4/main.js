@@ -3137,6 +3137,12 @@ function cmdAbout() {
     if (result.success) {
         // Display the content from about.txt
         addOutput(`<pre class="file-content">${escapeHtml(result.content)}</pre>`, 'success');
+        
+        // Add link to portfolio guide
+        addOutput('<br>', 'info');
+        addOutput('💡 <strong>New to the portfolio?</strong> Check out the guide:', 'info');
+        addOutput('   <span class="cmd">cat Documents/about_portfolio.txt</span>', 'info');
+        addOutput('   Or click on it in <span class="cmd">ls Documents</span> output!', 'info');
     } else {
         // Fallback if file not found
         addOutput(`about: ${result.error}`, 'error');
