@@ -5,7 +5,7 @@ Releases Log:
     - Alpha 0.0
     - Alpha 0.1 
 
-NEW FEATURES
+NEW FEATURES    
 ------------
 
 1. Interactive File System Navigation

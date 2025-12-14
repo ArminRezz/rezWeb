@@ -6,7 +6,7 @@
 #let github = "github.com/ArminRezz"
 #let linkedin = "linkedin.com/in/arminrezaiyan"
 #let phone = "+1 (301) 887-7747"
-//#let personal-site = "arminr.dev"
+#let personal-site = "arminr.dev"
 
 #show: resume.with(
   author: name,
@@ -14,7 +14,7 @@
   github: github,
   linkedin: linkedin,
   phone: phone,
-  //personal-site: personal-site,
+  personal-site: personal-site,
   accent-color: "#111111",
   font: "New Computer Modern",
   paper: "us-letter",
